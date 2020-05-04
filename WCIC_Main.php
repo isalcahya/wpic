@@ -5,7 +5,6 @@
  * Description:       custom plugin for GIS Donorejo
  * Version:           0.0.1
  * Requires at least: 5.2
- * Requires PHP:      7.2
  * Author:            isal-xyz
  * License:           GPL v2 or later
  * Text Domain:       gis custom plugins
@@ -26,10 +25,6 @@
 
  	public function __construct()
  	{
- 		echo '<pre>';
- 		print_r( 'init' );
- 		echo '</pre>';
- 		exit();
  		// create an init or an include to construct this plugin
  		$this->includes();
  		$this->init_hook();
@@ -55,7 +50,7 @@
 
  		}
 
- 		new App\admin\Admin_Main();
+ 		new App\lib\Wcic_Load_Class();
 
  	}
  		// activated this plugin

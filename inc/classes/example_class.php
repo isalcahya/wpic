@@ -4,15 +4,14 @@ namespace App\classes;
  *
  */
 class Example_Class {
-	public function register(){
+
+	// if you want to activated this class just set from unregister to register
+	public function unregister(){
 
 	}
 
 	public function init(){
-		echo '<pre>';
-		print_r( 'asu' );
-		echo '</pre>';
-		exit();
+
 	}
 
 }
