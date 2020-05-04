@@ -1,0 +1,15 @@
+{
+    "name": "isal/gis_icm",
+    "description": "base worpdress plugin",
+    "autoload": {
+    	"files": [
+	        "inc/functions.php"
+	    ],
+        "psr-4": {
+            "App\\": "inc"
+        }
+    },
+    "require": {
+        "hanneskod/classtools": "~1.0"
+    }
+}
