@@ -3,7 +3,7 @@ namespace App\classes;
 /**
  *
  */
-class Example_Class {
+class example_class {
 
 	// if you want to activated this class just set from unregister to register
 	public function unregister(){

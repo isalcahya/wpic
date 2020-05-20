@@ -1,8 +1,8 @@
 <?php
 
 /**
- * Plugin Name: 	  Gis Donorejo
- * Description:       custom plugin for GIS Donorejo
+ * Plugin Name: 	  Gis Sukorejo
+ * Description:       custom plugin for GIS Sukorejo
  * Version:           0.0.1
  * Requires at least: 5.2
  * Author:            isal-xyz
@@ -50,7 +50,9 @@
 
  		}
 
- 		new App\lib\Wcic_Load_Class();
+ 		if ( class_exists( 'App\lib\wcic_load_class' ) ) {
+ 			new App\lib\wcic_load_class();
+ 		}
 
  	}
  		// activated this plugin

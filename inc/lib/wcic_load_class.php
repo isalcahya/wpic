@@ -4,22 +4,37 @@
 
  use App\Plugin;
  use Symfony\Component\Finder;
+ use Symfony\Component\Finder\Exception as FinderExc;
  use hanneskod\classtools;
  /**
   *
   */
- class Wcic_Load_Class
+final class wcic_load_class
  {
 
  	private $plugin;
+
  	private $features;
+
  	private $class = [];
+
+ 	private static $on_init;
+
+ 	public $version = '2.4.2';
+
+	public $capability = 'manage_options'; // default GIS capabilities
+
+	public $plugin_domain = 'GIS';
+
+	public $name = 'gis_donorejo';
+
  	public function __construct()
 
  	{
  		# code...
  		// parent::__construct();
  		$this->features = [];
+
  		$this->include();
 
  		$this->init();
@@ -27,21 +42,30 @@
 
  	private function include(){
 
- 		$finder = new Finder\Finder();
+ 		try {
+ 			$finder = new Finder\Finder();
 
-		$iter = new classtools\Iterator\ClassIterator( $finder->in( PLUGIN_PATH.'inc/classes/' ) );
+ 			$path = $finder->in( PLUGIN_PATH.'inc/classes/' );
 
-		$iter->enableAutoloading();
+			$iter = new classtools\Iterator\ClassIterator( $path );
 
-		foreach ($iter as $class) {
+			$iter->enableAutoloading();
 
-		    $this->collectFitur($class->getName());
+			foreach ($iter as $class) {
 
-		}
+			    $this->collectFitur($class->getName());
 
-		// already register all fitur
-		$this->plugin = new Plugin();
-		$this->on_instance_classes();
+			}
+
+			// already register all fitur
+			$this->plugin = new Plugin();
+			$this->on_instance_classes();
+ 		} catch (FinderExc\DirectoryNotFoundException $e) {
+ 			echo '<pre>';
+ 			print_r( $e->getMessage() );
+ 			echo '</pre>';
+ 			exit();
+ 		}
  	}
 
  	private function init(){
@@ -52,13 +76,18 @@
 
  	public function on_init(){
 
+ 		if ( self::$on_init === true ) {
+ 			return 'error confused';
+ 		}
+
  		$this->wcic_inits_class();
 
+ 		do_action( $this->name . '_loadeds' );
  	}
 
  	private function wcic_inits_class(){
- 		if( count($this->features) ){
-
+ 		if( count($this->features) && true !== self::$on_init ){
+ 			self::$on_init = true;
  			foreach ( $this->features as $fitur ) {
 	 			# code...
 	 			// $this->class[$fitur] = self::instance($fitur);
@@ -77,12 +106,12 @@
 		$this->plugin->inits();
  	}
 
- 	public function __call($method, $arguments){
+ 	public function __call($class, $arguments){
  	 	if( count($this->features) ){
  			foreach ( $this->features as $fitur ) {
  				$className = $this->get_class_name($fitur);
- 				if ( method_exists( $this->class[$className], $method ) && is_callable( array( $this->class[$className], $method ) ) ){
-		            return call_user_func_array( array( $this->class[$className], $method ), $arguments );
+ 				if ( strtolower($className) === strtolower($class) ){
+		            return new $fitur;
 		        }
  			}
  		}
@@ -111,7 +140,7 @@
  		return $classes;
  	}
 
- 	public function get_class_name($fitur){
+ 	private function get_class_name($fitur){
  		return (new \ReflectionClass($fitur))->getShortName();
  	}
 
