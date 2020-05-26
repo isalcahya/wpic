@@ -6,6 +6,7 @@
  use Symfony\Component\Finder;
  use Symfony\Component\Finder\Exception as FinderExc;
  use hanneskod\classtools;
+ use Pecee\SimpleRouter\SimpleRouter;
  /**
   *
   */
@@ -20,17 +21,15 @@ final class wcic_load_class
 
  	private static $on_init;
 
- 	public $version = '2.4.2';
+ 	public $version = '0.0.1';
 
-	public $capability = 'manage_options'; // default GIS capabilities
+	public $capability = 'manage_options';
 
-	public $plugin_domain = 'GIS';
+	public $plugin_domain = 'plugin_domain';
 
-	public $name = 'gis_donorejo';
+	public $name = 'plugin_name';
 
- 	public function __construct()
-
- 	{
+ 	public function __construct() {
  		# code...
  		// parent::__construct();
  		$this->features = [];
@@ -60,7 +59,7 @@ final class wcic_load_class
 			// already register all fitur
 			$this->plugin = new Plugin();
 			$this->on_instance_classes();
- 		} catch (FinderExc\DirectoryNotFoundException $e) {
+ 		} catch ( FinderExc\DirectoryNotFoundException $e ) {
  			echo '<pre>';
  			print_r( $e->getMessage() );
  			echo '</pre>';
@@ -69,9 +68,8 @@ final class wcic_load_class
  	}
 
  	private function init(){
-
- 		add_action( 'plugins_loaded', array( $this , 'on_init' ), 10, 1 );
-
+ 		add_action( 'plugins_loaded', array( $this , 'on_init' ), 9, 1 );
+ 		add_action( 'handle_routes_registered', array( $this, 'register_simply_request' ), 10, 1 );
  	}
 
  	public function on_init(){
@@ -150,10 +148,32 @@ final class wcic_load_class
 
  	}
 
- 	Public function define($name='',$value){
+ 	Public function define( $name='', $value ){
 
-		if ( !defined($name) ) {
-			 define($name, $value);
+		if ( ! defined( $name ) ) {
+			 define( $name, $value );
+		}
+
+	}
+
+	public function register_simply_request(){
+
+		$this->HandleErrorRoute();
+
+		/**
+		 * The default namespace for route-callbacks, so we don't have to specify it each time.
+		 * Can be overwritten by using the namespace config option on your routes.
+		 */
+		SimpleRouter::setDefaultNamespace('\Demo\Controllers');
+
+		// Start the routing
+		SimpleRouter::start();
+	}
+
+	public function HandleErrorRoute(){
+
+		if ( file_exists( $routes = WPIC_BASE.'routes/errRoute.php' ) ) {
+			require_once $routes;
 		}
 
 	}
