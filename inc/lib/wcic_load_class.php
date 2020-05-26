@@ -10,8 +10,7 @@
  /**
   *
   */
-final class wcic_load_class
- {
+final class wcic_load_class {
 
  	private $plugin;
 
@@ -70,6 +69,7 @@ final class wcic_load_class
  	private function init(){
  		add_action( 'plugins_loaded', array( $this , 'on_init' ), 9, 1 );
  		add_action( 'handle_routes_registered', array( $this, 'register_simply_request' ), 10, 1 );
+ 		add_action( 'before_routes_registered', array( $this, 'before_routes_registered' ), 10, 1 );
  	}
 
  	public function on_init(){
@@ -156,18 +156,45 @@ final class wcic_load_class
 
 	}
 
+	/**
+	 * Get the plugin url.
+	 * @return string
+	 */
+	public function plugin_url(){
+		return untrailingslashit( plugins_url( '/', __FILE__ ) );
+	}
+
+	/**
+	 * Get the plugin path.
+	 * @return string
+	 */
+	public function plugin_path(){
+		return WPIC_BASE;
+		// return untrailingslashit( plugin_dir_path( __FILE__ ) ) . '/mba-project';
+	}
+
+	/**
+	 * Get the template path.
+	 * @return string
+	 */
+	public function template_path(){
+		return apply_filters( 'wcic_template_path', '/' );
+	}
+
 	public function register_simply_request(){
-
+		// handle the error routes
 		$this->HandleErrorRoute();
-
-		/**
-		 * The default namespace for route-callbacks, so we don't have to specify it each time.
-		 * Can be overwritten by using the namespace config option on your routes.
-		 */
-		SimpleRouter::setDefaultNamespace('\Demo\Controllers');
 
 		// Start the routing
 		SimpleRouter::start();
+	}
+
+	public function before_routes_registered(){
+		/**
+		 * The default namespace for route-callbacks, so we don't have to specify it each time.
+		 * Can be overwritten by using the namespace config option on your specific routes.
+		 */
+		SimpleRouter::setDefaultNamespace('Controllers');
 	}
 
 	public function HandleErrorRoute(){

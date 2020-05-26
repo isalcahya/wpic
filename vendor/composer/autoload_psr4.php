@@ -20,5 +20,6 @@ return array(
     'Pecee\\' => array($vendorDir . '/pecee/simple-router/src/Pecee'),
     'Invoker\\' => array($vendorDir . '/php-di/invoker/src'),
     'DI\\' => array($vendorDir . '/php-di/php-di/src'),
+    'Controllers\\' => array($baseDir . '/controller'),
     'App\\' => array($baseDir . '/inc'),
 );

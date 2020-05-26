@@ -1,7 +1,7 @@
 <?php
 use Pecee\SimpleRouter\SimpleRouter as Router;
-use Pecee\Http\Request;
 use Pecee\SimpleRouter\Exceptions\NotFoundHttpException;
+use Pecee\Http\Request;
 
 Router::get('/not-found', function(){
 	return 'damn, you goes wrong';

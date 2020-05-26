@@ -1,13 +1,16 @@
 <?php
-
-function WCIC(){
-	return new App\lib\wcic_load_class();
-}
-
 use Pecee\SimpleRouter\SimpleRouter as Router;
 use Pecee\Http\Url;
 use Pecee\Http\Response;
 use Pecee\Http\Request;
+
+/**
+ * Add custom function collections
+ *
+ * supports the following functions:
+ * - wcic-functions
+ */
+include_once( 'function-collections/wcic-function.php' );
 
 /**
  * Get url for a route by using either name/alias, class or method name.

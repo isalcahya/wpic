@@ -45,6 +45,10 @@ class ComposerStaticInit2dce31fe93a40587afd7397c9757e87e
         array (
             'DI\\' => 3,
         ),
+        'C' => 
+        array (
+            'Controllers\\' => 12,
+        ),
         'A' => 
         array (
             'App\\' => 4,
@@ -107,6 +111,10 @@ class ComposerStaticInit2dce31fe93a40587afd7397c9757e87e
         'DI\\' => 
         array (
             0 => __DIR__ . '/..' . '/php-di/php-di/src',
+        ),
+        'Controllers\\' => 
+        array (
+            0 => __DIR__ . '/../..' . '/controller',
         ),
         'App\\' => 
         array (

@@ -12,6 +12,9 @@ class wcic_load_request {
 	public function load_routes(){
 		try {
 			if ( file_exists( $routes = WPIC_BASE.'routes/routes.php' ) ) {
+				// action to handle before routes
+				do_action( 'before_routes_registered' );
+
 				/* Load external routes file */
 				require_once $routes;
 			} else {
