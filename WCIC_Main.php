@@ -17,8 +17,8 @@ if ( ! defined( 'ABSPATH' ) ) {
 
 define( 'PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 
-if ( ! class_exists( 'WCIC_Main' ) ) :
-final class WCIC_Main {
+if ( ! class_exists( 'Wcic_Main' ) ) :
+final class Wcic_Main {
 
  	public function __construct()
  	{
@@ -38,11 +38,12 @@ final class WCIC_Main {
  		$this->register_dependency();
 
  		// you can initilize action
-
  		if ( class_exists( 'App\lib\wcic_load_class' ) ) {
- 			new App\lib\wcic_load_class();
- 			new App\lib\wcic_load_request();
- 			new App\lib\wcic_load_environment();
+ 			\App\wcic_init_hooks::instance();
+ 		}
+
+ 		if ( class_exists( 'App\lib\wcic_load_environment' ) ) {
+ 			\App\lib\wcic_load_environment::instance();
  		}
  	}
 
@@ -52,12 +53,10 @@ final class WCIC_Main {
 
 	 		define( 'WPIC_BASE', plugin_dir_path(__FILE__) );
 
-			require WPIC_BASE.'vendor/autoload.php';
+			require untrailingslashit( WPIC_BASE ).'/vendor/autoload.php';
 
-			require WPIC_BASE.'dependency/wp-custom-dependency.php';
-
+			require untrailingslashit( WPIC_BASE ).'/dependency/wp-custom-dependency.php';
 			// jika program berhasil mengeksekusi sampai baris sini berarti plugin berhasil di 	  jalankan
-
  		}
  	}
 
@@ -74,6 +73,6 @@ final class WCIC_Main {
 
  }
 
- new WCIC_Main();
+ new Wcic_Main();
 
  endif;

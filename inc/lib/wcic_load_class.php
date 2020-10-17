@@ -29,13 +29,8 @@ final class wcic_load_class {
 	public $name = 'plugin_name';
 
  	public function __construct() {
- 		# code...
  		// parent::__construct();
  		$this->features = [];
-
- 		$this->include();
-
- 		$this->init();
  	}
 
  	private function include(){
@@ -43,7 +38,7 @@ final class wcic_load_class {
  		try {
  			$finder = new Finder\Finder();
 
- 			$path = $finder->in( PLUGIN_PATH.'inc/classes/' );
+ 			$path = $finder->in( PLUGIN_PATH.'inc/hooks/' );
 
 			$iter = new classtools\Iterator\ClassIterator( $path );
 
@@ -66,24 +61,19 @@ final class wcic_load_class {
  		}
  	}
 
- 	private function init(){
- 		add_action( 'plugins_loaded', array( $this , 'on_init' ), 9, 1 );
- 		add_action( 'handle_routes_registered', array( $this, 'register_simply_request' ), 10, 1 );
- 		add_action( 'before_routes_registered', array( $this, 'before_routes_registered' ), 10, 1 );
- 	}
-
  	public function on_init(){
+ 		$this->include();
 
  		if ( self::$on_init === true ) {
  			return 'error confused';
  		}
 
- 		$this->wcic_inits_class();
+ 		$this->wcic_inits_hooks();
 
  		do_action( $this->name . '_loadeds' );
  	}
 
- 	private function wcic_inits_class(){
+ 	private function wcic_inits_hooks(){
  		if( count($this->features) && true !== self::$on_init ){
  			self::$on_init = true;
  			foreach ( $this->features as $fitur ) {
@@ -104,17 +94,6 @@ final class wcic_load_class {
 		$this->plugin->inits();
  	}
 
- 	public function __call($class, $arguments){
- 	 	if( count($this->features) ){
- 			foreach ( $this->features as $fitur ) {
- 				$className = $this->get_class_name($fitur);
- 				if ( strtolower($className) === strtolower($class) ){
-		            return new $fitur;
-		        }
- 			}
- 		}
-    }
-
  	public function on_instance_classes(){
  		if( count($this->features) ){
 
@@ -124,7 +103,6 @@ final class wcic_load_class {
  			}
 
  		}
-
  	}
 
  	public static function instance($class){
@@ -157,11 +135,47 @@ final class wcic_load_class {
 	}
 
 	/**
-	 * Get the plugin url.
-	 * @return string
+	 * Returns various plugin paths or urls
+	 * @param  string  $type          type of path
+	 * @param  boolean $use_url       return as url or as absolute path
+	 * @return string                 path / url to the desired type
 	 */
-	public function plugin_url(){
-		return untrailingslashit( plugins_url( '/', __FILE__ ) );
+	public function get_path( $type = '', $use_url = false ) {
+
+		$base = $use_url ? trailingslashit( WP_SITE_URL )  : trailingslashit( WP_CONTENT_DIR );
+
+		switch ( $type ) {
+			case 'dist':
+				$path = $base . 'dist/';
+				break;
+
+			case 'templates':
+				$path = $base . 'resource/templates/';
+				break;
+
+			case 'libraries':
+				$path = $base . 'inc/lib/';
+				break;
+
+			case 'dep':
+				$path = $base . 'dependency/';
+				break;
+
+			case 'wp-scripts':
+				$path = $base . 'dependency/wp-scripts/';
+				break;
+
+			case 'assets':
+				$path = $base . 'inc/assets/';
+				break;
+
+			default:
+				$path = $base;
+				break;
+
+		}//end switch
+
+		return $path;
 	}
 
 	/**

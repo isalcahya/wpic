@@ -44,7 +44,7 @@ class wcic_load_view {
      * @param string $path Path to templates directory
      */
     public function __construct( ) {
-        $this->path = WCIC()->plugin_path() . 'resource/html';
+        $this->path = WCIC()->plugin_path() . 'resource/template';
     }
 
     /**

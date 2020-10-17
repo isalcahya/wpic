@@ -12,7 +12,13 @@ class AdminController {
 	}
 
 	public function admin(){
-		return 'admin';
+		view()->render( 'home',
+			// pass some varible to template
+			array( 'someVar' => "hello i'm coder" ) );
+	}
+
+	public function login(){
+
 	}
 
 }
