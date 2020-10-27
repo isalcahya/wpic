@@ -2,8 +2,7 @@ let mix = require('laravel-mix');
 
 mix.webpackConfig({
 	externals: {
-		"jquery": "jQuery",
-		// "bootstrap" : "bootstrap"
+		"jquery": "jQuery"
 	},
 	resolve: {
 		alias: {
@@ -17,7 +16,6 @@ mix.setPublicPath('dist')
 	.sass('resource/scss/front.scss', 'css').options({ processCssUrls: false })
 	.js('resource/js/test.js', 'js')
 	.version();
-
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management
