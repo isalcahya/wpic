@@ -54,10 +54,7 @@ final class wcic_load_class {
 			$this->plugin = new Plugin();
 			$this->on_instance_classes();
  		} catch ( FinderExc\DirectoryNotFoundException $e ) {
- 			echo '<pre>';
- 			print_r( $e->getMessage() );
- 			echo '</pre>';
- 			exit();
+ 			dd( $e->getMessage() );
  		}
  	}
 
@@ -168,6 +165,10 @@ final class wcic_load_class {
 			case 'assets':
 				$path = $base . 'inc/assets/';
 				break;
+
+			case 'resource':
+				$path = $base . 'resource/';
+			break;
 
 			default:
 				$path = $base;

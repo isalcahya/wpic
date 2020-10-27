@@ -2,6 +2,7 @@
 
 namespace App\lib;
 use App\lib\wcic_load_request;
+use Models\Database;
 /**
  *
  */
@@ -37,7 +38,10 @@ class wcic_load_environment {
 	}
 
 	private function start(){
-		$this->before_start();
+		// setup and try to connect database
+		Database::instance();
+
+		$this->before_loadeds();
 
 		// plugin initialize all class registered
 		do_action( 'init' );
@@ -49,7 +53,7 @@ class wcic_load_environment {
 		wcic_load_request::instance();
 	}
 
-	private function before_start(){
+	private function before_loadeds(){
 		// before plugin initialize all class registered
 		do_action( 'before_plugins_loaded' );
 	}

@@ -3,7 +3,7 @@ let mix = require('laravel-mix');
 mix.webpackConfig({
 	externals: {
 		"jquery": "jQuery",
-		"bootstrap" : "bootstrap"
+		// "bootstrap" : "bootstrap"
 	},
 	resolve: {
 		alias: {
@@ -14,7 +14,7 @@ mix.webpackConfig({
 
 mix.setPublicPath('dist')
 	// frontend
-	.sass('resource/scss/test.scss', 'css').options({ processCssUrls: false })
+	.sass('resource/scss/front.scss', 'css').options({ processCssUrls: false })
 	.js('resource/js/test.js', 'js')
 	.version();
 
