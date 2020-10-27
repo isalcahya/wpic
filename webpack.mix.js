@@ -2,7 +2,8 @@ let mix = require('laravel-mix');
 
 mix.webpackConfig({
 	externals: {
-		"jquery": "jQuery"
+		"jquery": "jQuery",
+		"bootstrap" : "bootstrap"
 	},
 	resolve: {
 		alias: {
@@ -13,9 +14,16 @@ mix.webpackConfig({
 
 mix.setPublicPath('dist')
 	// frontend
-	.sass('resource/scss/front.scss', 'css').options({ processCssUrls: false })
+	.sass('resource/scss/fronts/front.scss', 'css').options({ processCssUrls: false })
+	.sass('resource/scss/dashboard/dashboard.scss', 'css').options({ processCssUrls: false })
 	.js('resource/js/test.js', 'js')
 	.version();
+
+mix.copy( 'resource/external/img/dashboard/', 'dist/assets/img/' );
+mix.copy( 'resource/external/img/front/', 'dist/assets/img/' );
+mix.copy( 'resource/external/js/', 'dist/assets/js/' );
+mix.copy( 'resource/external/vendors/', 'dist/assets/vendor/' );
+mix.copy( 'resource/external/fonts/', 'dist/assets/fonts/' );
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management

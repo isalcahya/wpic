@@ -12,7 +12,7 @@ define( 'DBDRIVER', 'mysql' );
 define( 'DBHOST', 'localhost' );
 
 /** The name of the database for Apps */
-define( 'DBNAME', 'database__name' );
+define( 'DBNAME', 'pkl__fiani' );
 
 /** MySQL database username */
 define( 'DBUSER' , 'root' );
