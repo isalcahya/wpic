@@ -102,3 +102,9 @@ if ( ! function_exists( 'dd' ) ) {
         die;
     }
  }
+
+function wp_die( $message = "", int $code = 403 ){
+    response()->httpCode($code);
+    echo $message;
+    die();
+}

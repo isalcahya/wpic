@@ -2,6 +2,7 @@ let mix = require('laravel-mix');
 
 mix.webpackConfig({
 	externals: {
+		"wpic": "WPIC",
 		"jquery": "jQuery",
 		"bootstrap" : "bootstrap"
 	},

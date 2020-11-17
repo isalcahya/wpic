@@ -3,9 +3,9 @@
  namespace App\lib;
 
  use App\Plugin;
- use Symfony\Component\Finder;
- use Symfony\Component\Finder\Exception as FinderExc;
- use hanneskod\classtools;
+ use Symfony\Component\Finder\Finder;
+ use Symfony\Component\Finder\Exception;
+ use hanneskod\classtools\Iterator;
  use Pecee\SimpleRouter\SimpleRouter;
  /**
   *
@@ -28,6 +28,25 @@ final class wcic_load_class {
 
 	public $name = 'plugin_name';
 
+	protected static $_instance = null;
+
+	/**
+	 * Main Plugin Name Instance
+	 *
+	 * Ensures only one instance of Plugin Name is loaded or can be loaded.
+	 *
+	 * @since 1.0
+	 * @static
+	 * @return Plugin Name - Main instance
+	 */
+	public static function init() {
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+
+		return self::$_instance;
+	}
+
  	public function __construct() {
  		// parent::__construct();
  		$this->features = [];
@@ -36,24 +55,25 @@ final class wcic_load_class {
  	private function include(){
 
  		try {
- 			$finder = new Finder\Finder();
-
- 			$path = $finder->in( PLUGIN_PATH.'inc/hooks/' );
-
-			$iter = new classtools\Iterator\ClassIterator( $path );
-
+ 			foreach ( array( PLUGIN_PATH.'inc/hooks/', PLUGIN_PATH.'app/hooks/') as $key => $dir ) {
+ 				if ( is_dir( $dir ) ) {
+ 					$dirs[] = $dir;
+ 				}
+ 			}
+ 			if ( !isset( $dirs ) && empty( $dirs ) ) {
+ 				throw new Exception\DirectoryNotFoundException("Error Processing Request", 1);
+ 			}
+ 			$finder = new Finder;
+			$iter = new Iterator\ClassIterator($finder->in($dirs));
 			$iter->enableAutoloading();
-
-			foreach ($iter as $class) {
-
-			    $this->collectFitur($class->getName());
-
+			// Print the file names of classes, interfaces and traits in 'src'
+			foreach ($iter->getClassMap() as $classname => $splFileInfo) {
+			    $this->collectFitur($classname);
 			}
-
 			// already register all fitur
 			$this->plugin = new Plugin();
 			$this->on_instance_classes();
- 		} catch ( FinderExc\DirectoryNotFoundException $e ) {
+ 		} catch ( Exception\DirectoryNotFoundException $e ) {
  			dd( $e->getMessage() );
  		}
  	}
@@ -83,9 +103,7 @@ final class wcic_load_class {
 	 				// feature already registered
 	 				$this->class[$className]->register();
 	 			}
-
  			}
-
  		}
 		// initialise the plugin
 		$this->plugin->inits();
@@ -93,13 +111,26 @@ final class wcic_load_class {
 
  	public function on_instance_classes(){
  		if( count($this->features) ){
-
  			foreach ( $this->features as $fitur ) {
  				$className = $this->get_class_name($fitur);
  				$this->class[$className] = self::instance($fitur);
  			}
-
  		}
+ 	}
+
+ 	private function get_dir_classes( $dir ){
+ 		// store already declared classes:
+		$predeclaredClasses = get_declared_classes();
+
+		// Load classes inside the given folder:
+		foreach ( (array) $dir as $key => $value ) {
+			$i = new \FileSystemIterator($value, \FileSystemIterator::SKIP_DOTS);
+		    foreach ($i as $f) {
+		        require_once $f->getPathname();
+		    }
+		}
+		// Enjoy
+		return array_diff(get_declared_classes(), $predeclaredClasses);
  	}
 
  	public static function instance($class){
@@ -166,9 +197,17 @@ final class wcic_load_class {
 				$path = $base . 'inc/assets/';
 				break;
 
+			case 'admin-ajax':
+				$path = $base . 'wpic-admin/';
+				break;
+
 			case 'resource':
 				$path = $base . 'resource/';
 			break;
+
+			case 'admin-route':
+				$path = $base . 'inc/route/';
+				break;
 
 			default:
 				$path = $base;
@@ -177,6 +216,24 @@ final class wcic_load_class {
 		}//end switch
 
 		return $path;
+	}
+
+	/**
+	 * What type of request is this?
+	 * string $type ajax, frontend or admin
+	 * @return bool
+	 */
+	public function is_request( $type ) {
+		switch ( $type ) {
+			case 'admin':
+				return is_admin();
+			case 'ajax':
+				return defined( 'DOING_AJAX' );
+			case 'cron':
+				return defined( 'DOING_CRON' );
+			case 'frontend':
+				return ( ! is_admin() || defined( 'DOING_AJAX' ) ) && ! defined( 'DOING_CRON' );
+		}
 	}
 
 	/**
@@ -197,9 +254,6 @@ final class wcic_load_class {
 	}
 
 	public function register_simply_request(){
-		// handle the error routes
-		$this->HandleErrorRoute();
-
 		// Start the routing
 		SimpleRouter::start();
 	}
@@ -210,14 +264,9 @@ final class wcic_load_class {
 		 * Can be overwritten by using the namespace config option on your specific routes.
 		 */
 		SimpleRouter::setDefaultNamespace('Controllers');
-	}
 
-	public function HandleErrorRoute(){
-
-		if ( file_exists( $routes = WPIC_BASE.'routes/errRoute.php' ) ) {
-			require_once $routes;
+		if ( file_exists( $route_source = $this->get_path('admin-route') . 'wpic-dashboard-routes.php' ) ) {
+			include( $route_source );
 		}
-
 	}
-
  }

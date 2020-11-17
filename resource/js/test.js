@@ -1,10 +1,16 @@
 import $ from 'jquery';
-
+import $w from 'wpic';
 class test {
 	constructor(){
 		this.init();
+		this.from();
 	}
-
+	from(){
+		console.log($w)
+		$(document).on( 'change', '#customCheckRegister', function(){
+			alert($(this).val())
+		})
+	}
 	init(){
 		// options
 	    var breakpoints = {
@@ -167,15 +173,15 @@ class test {
 	    });
 
 	    //Parallax
-	    $('.jarallax').jarallax({
-	        speed: 0.2
-	    });
+	    // $('.jarallax').jarallax({
+	    //     speed: 0.2
+	    // });
 
-	    //Smooth scroll
-	    var scroll = new SmoothScroll('a[href*="#"]', {
-	        speed: 500,
-	        speedAsDuration: true
-	    });
+	    // //Smooth scroll
+	    // var scroll = new SmoothScroll('a[href*="#"]', {
+	    //     speed: 500,
+	    //     speedAsDuration: true
+	    // });
 
 	    // Equalize height to the max of the elements
 	    if ($(document).width() >= breakpoints.lg) {

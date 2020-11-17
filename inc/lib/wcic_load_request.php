@@ -30,23 +30,28 @@ final class wcic_load_request {
 
 	public function load_routes(){
 		try {
-			if ( file_exists( $routes = untrailingslashit( WPIC_BASE ) .'/routes/routes.php' ) ) {
-				// action to handle before routes
-				do_action( 'before_routes_registered' );
-
-				/* Load external routes file */
-				require_once $routes;
+			$folderroutes  = untrailingslashit( WPIC_BASE ) .'/routes/';
+			$path = realpath($folderroutes);
+			 if( $path !== false AND is_dir($path) ) {
+			 		$files = glob($path . '/*.php');
+			 		if ( !empty( $files ) ) {
+				 		/* Do something before all route registered */
+						do_action( 'before_routes_registered' );
+				 	}
+				 	foreach ( $files as $key => $file ) {
+				 		/* Load external routes file */
+						require_once $file;
+				 	}
 			} else {
-				$error[] = 'File routes.php not found,';
-				$error[] = 'We instead found';
-				$error[] = sprintf( '%s', $routes );
+				$error[] = 'Folder routes not found,';
+				$error[] = 'Please make sure you has created that folder';
 				throw new \Exception( implode( PHP_EOL, $error ) , 1);
 			}
 		} catch ( \Exception $e ) {
 			dd($e->getMessage());
 		}
 
-		do_action( 'handle_routes_registered' );
+		do_action( 'setup_routes_handler' );
 	}
 
 }

@@ -20,6 +20,25 @@ define( 'PLUGIN_PATH', plugin_dir_path( __FILE__ ) );
 if ( ! class_exists( 'Wcic_Main' ) ) :
 final class Wcic_Main {
 
+	protected static $_instance = null;
+
+	/**
+	 * Main Plugin Name Instance
+	 *
+	 * Ensures only one instance of Plugin Name is loaded or can be loaded.
+	 *
+	 * @since 1.0
+	 * @static
+	 * @return Plugin Name - Main instance
+	 */
+	public static function instance() {
+		if ( is_null( self::$_instance ) ) {
+			self::$_instance = new self();
+		}
+
+		return self::$_instance;
+	}
+
  	public function __construct()
  	{
  		// create an init or an include to construct this plugin
@@ -38,7 +57,7 @@ final class Wcic_Main {
  		$this->register_dependency();
 
  		// you can initilize action
- 		if ( class_exists( 'App\lib\wcic_load_class' ) ) {
+ 		if ( class_exists( 'App\wcic_init_hooks' ) ) {
  			\App\wcic_init_hooks::instance();
  		}
 
@@ -54,8 +73,6 @@ final class Wcic_Main {
 	 		define( 'WPIC_BASE', plugin_dir_path(__FILE__) );
 
 			require untrailingslashit( WPIC_BASE ).'/vendor/autoload.php';
-
-			require untrailingslashit( WPIC_BASE ).'/dependency/wp-custom-dependency.php';
 			// jika program berhasil mengeksekusi sampai baris sini berarti plugin berhasil di 	  jalankan
  		}
  	}
@@ -70,9 +87,7 @@ final class Wcic_Main {
  		// flush rewrite rules;
  		flush_rewrite_rules();
  	}
-
- }
-
- new Wcic_Main();
-
- endif;
+}
+// bootstrap wpic framework
+Wcic_Main::instance();
+endif;

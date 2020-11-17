@@ -1,4 +1,4 @@
-<?php view()->render( 'header-login' ); ?>
+<?php view()->render( 'header-auth' ); ?>
 <!-- Main content -->
 <div class="main-content">
 	<!-- Header -->
@@ -49,7 +49,8 @@
 			</div>
 			 */
 	        ?>
-	          <form role="form">
+	          <form role="form" action="" method="">
+	          	<input type="hidden" name="csrf_token" value="<?= csrf_token(); ?>">
 	            <div class="form-group mb-3">
 	              <div class="input-group input-group-merge input-group-alternative">
 	                <div class="input-group-prepend">
@@ -83,11 +84,11 @@
 	          <a href="#" class="text-gray"><small>Forgot password?</small></a>
 	        </div>
 	        <div class="col-6 text-right">
-	          <a href="#" class="text-gray"><small>Create new account</small></a>
+	          <a href="<?php echo url( 'register.page' ) ?>" class="text-gray"><small>Create new account</small></a>
 	        </div>
 	      </div>
 	    </div>
 	  </div>
 	</div>
 </div>
-<?php view()->render( 'footer-login' ); ?>
+<?php view()->render( 'footer-auth' ); ?>

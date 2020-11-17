@@ -39,7 +39,7 @@
     <div class="scrollbar-inner">
       <!-- Brand -->
       <div class="sidenav-header  d-flex  align-items-center">
-        <a class="navbar-brand" href="../../../index.html">
+        <a class="navbar-brand" href="">
           <img src="<?php echo get_dist_directory(); ?>/assets/img/brand/dark.svg" height="40" class="navbar-brand-img" alt="...">
         </a>
         <div class=" ml-auto ">
@@ -58,24 +58,43 @@
         <div class="collapse navbar-collapse" id="sidenav-collapse-main">
           <!-- Nav items -->
           <ul class="navbar-nav">
-            <li class="nav-item">
-              <a class="nav-link active" href="#navbar-dashboards" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="navbar-dashboards">
-                <i class="ni ni-shop text-primary"></i>
-                <span class="nav-link-text">Dashboards</span>
-              </a>
-              <div class="collapse show" id="navbar-dashboards">
-                <ul class="nav nav-sm flex-column">
-                  <li class="nav-item">
-                    <a href="<?php echo url( 'dash.main' ); ?>" class="nav-link">
-                      <span class="sidenav-mini-icon"> D </span>
-                      <span class="sidenav-normal"> Dashboard </span>
-                    </a>
-                  </li>
-                </ul>
-              </div>
-            </li>
+            <?php foreach ( wpic_get_menus_dashboard() as $key => $menu ): ?>
+              <?php if ( isset($menu['child']) && !empty($menu['child']) ): ?>
+                <li class="nav-item">
+                  <a class="nav-link" href="#<?php echo $menu['page_id']; ?>" data-toggle="collapse" role="button" aria-expanded="true" aria-controls="<?php echo $menu['page_id']; ?>">
+                    <i class="<?php echo $menu['iconcode']; ?> text-primary"></i>
+                    <span class="nav-link-text"><?php echo $menu['menu_title']; ?></span>
+                  </a>
+                  <div class="collapse show" id="<?php echo $menu['page_id']; ?>">
+                    <ul class="nav nav-sm flex-column">
+                      <li class="nav-item">
+                        <a href="<?php echo url( $menu['page_id'] ); ?>" class="nav-link">
+                          <span class="sidenav-mini-icon"> <?php echo ucfirst($menu['menu_title'][0]); ?> </span>
+                          <span class="sidenav-normal"> <?php _e( ucfirst($menu['menu_title']), 'wpic' ) ?> </span>
+                        </a>
+                      </li>
+                      <?php foreach ( $menu['child'] as $key => $child ): ?>
+                        <li class="nav-item">
+                          <a href="<?php echo url( 'child.'.$child['page_id'] ); ?>" class="nav-link">
+                            <span class="sidenav-mini-icon"> <?php echo ucfirst($child['menu_slug'][0]) ?> </span>
+                            <span class="sidenav-normal"> <?php _e( ucfirst( $child['menu_slug'] ), 'wpic' ); ?> </span>
+                          </a>
+                        </li>
+                      <?php endforeach ?>
+                    </ul>
+                  </div>
+                </li>
+              <?php else: ?>
+                <li class="nav-item">
+                  <a class="nav-link" href="<?php echo url( $menu['page_id'] ) ?>">
+                    <i class="<?php echo $menu['iconcode']; ?>"></i>
+                    <span class="nav-link-text"><?php _e( ucfirst( $menu['menu_title'] ), 'wpic' ) ?></span>
+                  </a>
+                </li>
+              <?php endif ?>
+            <?php endforeach ?>
             <!-- <hr class="my-3"> -->
-            <!--  <h6 class="navbar-heading pl-4 text-muted">
+            <!-- <h6 class="navbar-heading pl-4 text-muted">
               <span class="docs-normal">Documentation</span>
             </h6>
             <li class="nav-item">

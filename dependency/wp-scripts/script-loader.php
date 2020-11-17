@@ -22,7 +22,7 @@ function wp_set_default_scripts( &$scripts ) {
 	$scripts->default_dirs    = array( '/dist/js/', '/inc/assets/js/' );
 
 	$scripts->add( 'jquery', "/inc/assets/js/jquery/jquery{$ext}.js" );
-	$scripts->add( 'bootstrap', "/inc/assets/js/bootstrap/bootstrap{$ext}.js" );
+	$scripts->add( 'bootstrap', "/inc/assets/js/bootstrap/bootstrap.bundle{$ext}.js" );
 }
 
 /**
