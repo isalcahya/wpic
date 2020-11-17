@@ -1,0 +1,41 @@
+#!/usr/bin/env php
+<?php
+require __DIR__ . '/vendor/autoload.php';
+/**
+ * Silex Skeleton App version 0.1.0
+ * https://github.com/Ardakilic/silex-skeleton-app
+ * Arda Kilicdagi <arda@kilicdagi.com>
+ */
+
+use Symfony\Component\Console\Application;
+
+use Commands\GreetCommand;
+use Commands\GenerateCommand;
+
+//PHPMig commands
+use Phpmig\Console\Command;
+
+$application = new Application("WPIC", '0.1.0');
+
+//Let's import PHPMig's commands into our own Application
+$phpmig_commands = [
+    new Command\CheckCommand(),
+    new Command\DownCommand(),
+    new GenerateCommand(),
+    new Command\InitCommand(),
+    new Command\MigrateCommand(),
+    new Command\RedoCommand(),
+    new Command\RollbackCommand(),
+    new Command\StatusCommand(),
+    new Command\UpCommand(),
+];
+foreach ($phpmig_commands as $command) {
+    $command->setName('wp:' . $command->getName());
+}
+$application->addCommands($phpmig_commands);
+
+//Custom commands
+$application->add(new GreetCommand());
+
+//Run it
+$application->run();
