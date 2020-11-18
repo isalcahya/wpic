@@ -18,36 +18,71 @@ class WpicFronts {
 		add_action( 'wcic-setup-register-page', array( $this, 'remove_front_dependency' ) );
 		add_action( 'wcic-render-landpage', array( $this, 'prepare_landpage' ) );
 		add_action( 'wcic_navbar_template', array( $this, 'navbar_default_template' ) );
-		add_action( 'front_post_handler', array( $this, 'front_post_callback' ) );
+		add_action( 'front_post_handler', array( $this, 'front_post_callback' ), 10, 2 );
  	}
 
- 	public function front_post_callback( $postdata ){
- 		if ( isset( $postdata['_register'] ) && $postdata['_register'] ) {
- 			try {
- 				if ( ! ( $auth = get_wpauth() ) ) {
+ 	public function front_post_callback( $page, $postdata ){
+ 		try {
+ 			if ( ( empty($page) && !is_string($page) ) || empty( $postdata ) ) {
+ 				throw new \Exception("Error Processing Request", 1);
+ 			}
+ 			if ( ! ( $auth = get_wpauth() ) ) {
+				throw new \Exception("Error Processing Request", 1);
+			}
+			if ( $auth->check() ) {
+				if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) ) {
+					redirect(redirect_by_role('admin'));
+				}
+				if ( $auth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
+					redirect(redirect_by_role('author'));
+				}
+			}
+ 			$page = explode( '.', $page );
+ 			$page = isset($page[0]) ? $page[0] : 0;
+ 			switch ( $page ) {
+ 				case 'login':
+ 					if ( isset( $postdata['_login'] ) && $postdata['_login'] ) {
+ 						$auth->login($postdata['user_email'], $postdata['user_pass']);
+ 						if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) ) {
+ 							redirect(redirect_by_role('admin'));
+ 						}
+ 						if ( $auth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
+ 							redirect(redirect_by_role('author'));
+ 						}
+			 		}
+ 					break;
+ 				case 'resgister':
+ 					if ( isset( $postdata['_register'] ) && $postdata['_register'] ) {
+						$userId = $auth->register($postdata['user_email'], $postdata['user_pass'], $postdata['user_username']);
+						# todo make email confirmation for registered user
+						if ( $userId ) {
+							$auth->login( $postdata['user_email'], $postdata['user_pass'] );
+							if ( $auth->check() ) {
+								redirect(WCIC()->get_path('', true).'wp-user/dashboard');
+							}
+						}
+			 		}
+ 					break;
+ 				default:
  					throw new \Exception("Error Processing Request", 1);
- 				}
-			    $userId = $auth->register($postdata['user_email'], $postdata['user_pass'], $postdata['user_username']);
-			    // if ( $userId ) {
-			    // 	$auth->admin()->addRoleForUserById( $userId, \Delight\Auth\Role::ADMIN );
-			    // }
-			}
-			catch (\Delight\Auth\InvalidEmailException $e) {
-			    die('Invalid email address');
-			}
-			catch (\Delight\Auth\InvalidPasswordException $e) {
-			    die('Invalid password');
-			}
-			catch (\Delight\Auth\UserAlreadyExistsException $e) {
-			    die('User already exists');
-			}
-			catch (\Delight\Auth\TooManyRequestsException $e) {
-			    die('Too many requests');
-			}
-			catch (\Exception $e) {
-			    die($e->getMessage());
-			}
- 		}
+ 					break;
+ 			}
+		}
+		catch (\Delight\Auth\InvalidEmailException $e) {
+		    die('Invalid email address');
+		}
+		catch (\Delight\Auth\InvalidPasswordException $e) {
+		    die('Invalid password');
+		}
+		catch (\Delight\Auth\UserAlreadyExistsException $e) {
+		    die('User already exists');
+		}
+		catch (\Delight\Auth\TooManyRequestsException $e) {
+		    die('Too many requests');
+		}
+		catch (\Exception $e) {
+		    die($e->getMessage());
+		}
  	}
 
 	public function navbar_default_template(){

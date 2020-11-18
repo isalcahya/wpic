@@ -4,6 +4,8 @@ $routeName = request()->getLoadedRoute()->getName();
 * render header dashboard
 */
 view()->render( 'header-dashboard' );
+
+$user = wp_get_current_user();
 ?>
 <!-- Main content -->
 <div class="main-content" id="panel">
@@ -81,7 +83,7 @@ view()->render( 'header-dashboard' );
                     <div class="col ml--2">
                       <div class="d-flex justify-content-between align-items-center">
                         <div>
-                          <h4 class="mb-0 text-sm">John Snow</h4>
+                          <h4 class="mb-0 text-sm"></h4>
                         </div>
                         <div class="text-right text-muted">
                           <small>3 hrs ago</small>
@@ -207,7 +209,7 @@ view()->render( 'header-dashboard' );
                   <img alt="Image placeholder" src="<?php echo get_dist_directory(); ?>/assets/img/theme/team-4.jpg">
                 </span>
                 <div class="media-body  ml-2  d-none d-lg-block">
-                  <span class="mb-0 text-sm  font-weight-bold">John Snow</span>
+                  <span class="mb-0 text-sm  font-weight-bold"><?php echo $user->username; ?></span>
                 </div>
               </div>
             </a>
@@ -232,7 +234,7 @@ view()->render( 'header-dashboard' );
                 <span>Support</span>
               </a>
               <div class="dropdown-divider"></div>
-              <a href="#!" class="dropdown-item">
+              <a href="<?php echo url( 'logout', null, array( 'wp_csrf_token' => csrf_token() ) ); ?>" class="dropdown-item">
                 <i class="ni ni-user-run"></i>
                 <span>Logout</span>
               </a>

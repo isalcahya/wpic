@@ -4,7 +4,7 @@ namespace App\middleware;
 use Pecee\Http\Middleware\IMiddleware;
 use Pecee\Http\Request;
 
-class AdminDashboard implements IMiddleware {
+class UserDashboard implements IMiddleware {
 
 	public function handle(Request $request): void
 	{
@@ -15,9 +15,6 @@ class AdminDashboard implements IMiddleware {
 		}
 		if ( ! $wpauth->isLoggedIn() ) {
 			response()->redirect($redirect);
-		}
-		if ( $wpauth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
-			redirect(redirect_by_role('author'));
 		}
 	}
 }

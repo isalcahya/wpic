@@ -312,3 +312,30 @@ function admin_ajax_url( $path ){
 	}
 	return $url;
 }
+
+function redirect_by_role(string $role){
+	$redirect = '';
+	switch ( $role ) {
+		case 'admin':
+			$redirect = WCIC()->get_path('', true).'wp-admin/';
+			break;
+		case 'author':
+			$redirect = WCIC()->get_path('', true).'wp-user/';
+			break;
+	}
+	return $redirect;
+}
+
+function canManageUser(\Delight\Auth\Auth $auth) {
+    return $auth->hasRole(\Delight\Auth\Role::AUTHOR);
+}
+
+function wp_token_verifier(string $token){
+	if ( empty($token) ) {
+		throw new \Exception('Invalid CSRF-token.');
+	}
+	$wpcsrf = App\wcic_init_hooks::wpcsrf();
+	if ( $wpcsrf->getTokenProvider()->validate((string)$token) === false) {
+        throw new \Exception('Invalid CSRF-token.');
+    }
+}

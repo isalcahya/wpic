@@ -17,6 +17,8 @@ class wcic_init_hooks {
 	public $path;
 
 	protected $router;
+
+	protected static $wpcsrf;
 	/**
 	 * Main Plugin Name Instance
 	 *
@@ -78,7 +80,7 @@ class wcic_init_hooks {
 	}
 
 	public function set_csrf_token_verifier(){
-		SimpleRouter::csrfVerifier( new WpicCsrfVerifier() );
+		SimpleRouter::csrfVerifier( static::wpcsrf() );
 		$this->router 	= SimpleRouter::router();
 		$this->request 	= SimpleRouter::request();
 	}
@@ -96,4 +98,18 @@ class wcic_init_hooks {
 		/* setup and try to connect database */
 		WpicEloquent::instance();
 	}
+
+	 /**
+     * Returns the WpicCsrfVerifier instance
+     *
+     * @return Router
+     */
+    public static function wpcsrf(): WpicCsrfVerifier
+    {
+        if (static::$wpcsrf === null) {
+            static::$wpcsrf = new WpicCsrfVerifier();
+        }
+
+        return static::$wpcsrf;
+    }
 }

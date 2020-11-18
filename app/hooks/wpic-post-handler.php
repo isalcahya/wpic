@@ -12,6 +12,6 @@ class WpicPostHandler {
 	}
 
 	public function wcic_post_handler_reg_page(){
-		$csrf = input()->post('csrf_token', null);
+
 	}
 }

@@ -45,14 +45,14 @@ $routes = function ( $regsitered_pages ) use ($staticHandle) {
 	}
 };
 
-Router::group( ['prefix' => '/wp-admin', 'middleware' => \App\middleware\AdminDashboard::class ], function () use ($routes){
+Router::group( ['prefix' => '/wp-admin', 'middleware' => \App\middleware\AdminDashboard::class], function () use ($routes){
 	if ( ! is_admin() ) {
 		return;
 	}
 	$routes( wpic_get_menus_dashboard() );
 });
 
-Router::group( ['prefix' => '/wp-user'], function () use ($routes){
+Router::group( ['prefix' => '/wp-user', 'middleware' => \App\middleware\UserDashboard::class], function () use ($routes){
 	if ( ! is_user_page() ) {
 		return;
 	}

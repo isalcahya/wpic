@@ -14,7 +14,23 @@ class DefHooks {
 		if ( is_admin() || is_user_page() ) {
 			add_action( 'wpic_setup_dashboard', array( $this, 'smart_setup_dashboard' ), 9 );
 		}
+		add_action( 'admin_init', array( $this, 'add_menu_dashboard_page' ) );
 	}
+
+	public function add_menu_dashboard_page( ){
+		add_dashboard_page(
+			'dashboard',
+			__( 'Dashboard', 'wpic' ),
+			'manage',
+			'dashboard',
+			array( $this, 'render_main_dashboard' ),
+			'ni ni-shop'
+		);
+	}
+
+	public function render_main_dashboard(){
+ 		view()->render( 'parts/dashboard/main-content' );
+ 	}
 
 	public function smart_setup_dashboard( $page ){
 		// dequeue

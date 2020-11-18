@@ -52,8 +52,10 @@ class wcic_load_environment {
 	}
 
 	private function end(){
-		/* fire after plugin has done setup */
-		do_action( 'shutdown' );
+		if ( ! defined( 'REMOVE_ROUTES' ) || ! REMOVE_ROUTES ) {
+			/* fire after plugin has done setup */
+			do_action( 'shutdown' );
+		}
 	}
 
 	public function route_event_handler(  ){
@@ -85,6 +87,7 @@ class wcic_load_environment {
 								break;
 						}
 					}
+
 					/**
 					* Set global $wp_current_page from current request
 					*/
@@ -104,6 +107,10 @@ class wcic_load_environment {
 						*/
 						do_action( 'admin_init' );
 
+						if ( count( array_filter($explodeUrl) ) === 1 ) {
+							$request->setRewriteUrl( rtrim($originUrl, '/') . '/dashboard' );
+						}
+
 					} else if( isset( $request->user_page ) && true === $request->user_page ){
 
 						/**
@@ -114,6 +121,10 @@ class wcic_load_environment {
 						* @since 0.0.1
 						*/
 						do_action( 'user_init' );
+
+						if ( count( array_filter($explodeUrl) ) === 1 ) {
+							$request->setRewriteUrl( rtrim($originUrl, '/') . '/dashboard' );
+						}
 
 					}
 					// DO STUFF

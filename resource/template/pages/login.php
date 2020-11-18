@@ -49,14 +49,15 @@
 			</div>
 			 */
 	        ?>
-	          <form role="form" action="" method="">
-	          	<input type="hidden" name="csrf_token" value="<?= csrf_token(); ?>">
+	          <form role="form" action="<?= url() ?>" method="POST">
+	          	<input type="hidden" name="wp_csrf_token" value="<?= csrf_token(); ?>">
+	          	<input type="hidden" name="_login" value="1">
 	            <div class="form-group mb-3">
 	              <div class="input-group input-group-merge input-group-alternative">
 	                <div class="input-group-prepend">
 	                  <span class="input-group-text"><i class="ni ni-email-83"></i></span>
 	                </div>
-	                <input class="form-control" placeholder="Email" type="email">
+	                <input class="form-control" placeholder="Email" type="email" name="user_email">
 	              </div>
 	            </div>
 	            <div class="form-group">
@@ -64,7 +65,7 @@
 	                <div class="input-group-prepend">
 	                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
 	                </div>
-	                <input class="form-control" placeholder="Password" type="password">
+	                <input class="form-control" placeholder="Password" type="password" name="user_pass">
 	              </div>
 	            </div>
 	            <div class="custom-control custom-control-alternative custom-checkbox">
@@ -74,7 +75,7 @@
 	              </label>
 	            </div>
 	            <div class="text-center">
-	              <a href="/dashboard" class="btn btn-primary my-4">Sign in</a>
+	              <button type="submit" class="btn btn-primary my-4">Sign in</button>
 	            </div>
 	          </form>
 	        </div>
