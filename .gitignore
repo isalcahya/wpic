@@ -2,6 +2,7 @@
 /vendor
 /dist
 /resource/scss
+vendors
 .phpintel
 package-lock.json
 composer.lock
