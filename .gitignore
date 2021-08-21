@@ -1,6 +1,7 @@
 # DEPENDENCIES MANAGEMENT
-vendor
-dist
+/vendor
+/dist
+/resource/scss
 .phpintel
 package-lock.json
 composer.lock
