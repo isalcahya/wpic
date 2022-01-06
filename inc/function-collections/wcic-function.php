@@ -193,6 +193,25 @@ function wp_get_current_user() {
 	return $current_user;
 }
 
+//
+// User option functions.
+//
+
+/**
+ * Get the current user's ID
+ *
+ * @since MU (3.0.0)
+ *
+ * @return int The current user's ID, or 0 if no user is logged in.
+ */
+function get_current_user_id() {
+	if ( ! function_exists( 'wp_get_current_user' ) ) {
+		return 0;
+	}
+	$user = wp_get_current_user();
+	return ( isset( $user->ID ) ? (int) $user->ID : 0 );
+}
+
 function wp_set_current_auth(\Delight\Auth\Auth $auth){
 	global $current_user;
 	if ( ! $auth->isLoggedIn() ) {

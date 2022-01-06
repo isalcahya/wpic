@@ -25,19 +25,7 @@
     <div class="row justify-content-center">
       <div class="col-lg-6 col-md-8">
         <div class="card bg-secondary border border-soft">
-          <div class="card-header bg-transparent pb-5">
-            <div class="text-muted text-center mt-2 mb-4"><small><?php _e( 'Sign up with', 'WPIC' ) ?></small></div>
-            <div class="text-center">
-              <a href="#" class="btn btn-neutral btn-icon">
-                <span class="btn-inner--icon"><img src="<?php echo get_dist_directory(); ?>/assets/img/icons/common/google.svg"></span>
-                <span class="btn-inner--text"><?php _e( 'Google', 'WPIC' ) ?></span>
-              </a>
-            </div>
-          </div>
           <div class="card-body px-lg-5 py-lg-5">
-            <div class="text-center text-muted mb-4">
-              <small><?php _e( 'Or sign up with credentials', 'WPIC' ) ?></small>
-            </div>
             <form action="<?= url(); ?>" method="post">
               <input type="hidden" name="wp_csrf_token" value="<?= csrf_token(); ?>">
               <input type="hidden" name="_register" value="1">

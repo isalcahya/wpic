@@ -20,7 +20,7 @@ class DefHooks {
 	public function add_menu_dashboard_page( ){
 		add_dashboard_page(
 			'dashboard',
-			__( 'Dashboard', 'wpic' ),
+			__( apply_filters( 'wpic_main_menu_name', 'Dashboard' ), 'wpic' ),
 			'manage',
 			'dashboard',
 			array( $this, 'render_main_dashboard' ),
@@ -29,7 +29,7 @@ class DefHooks {
 	}
 
 	public function render_main_dashboard(){
- 		view()->render( 'parts/dashboard/main-content' );
+		do_action( 'render_main_dashboard' );
  	}
 
 	public function smart_setup_dashboard( $page ){
@@ -39,7 +39,10 @@ class DefHooks {
 
  		// enqueue
  		wp_enqueue_style('fullcalendar');
- 		wp_enqueue_style('sweatallert');
+
+ 		wp_enqueue_style('sweetallert');
+ 		wp_enqueue_script('sweetallert');
+
  		wp_enqueue_script('dashboard');
  		wp_enqueue_style('dashboard');
 
@@ -56,11 +59,12 @@ class DefHooks {
  		wp_register_script( 'scrollock', $this->pathDist . '/assets/vendor/jquery-scroll-lock/dist/jquery-scrollLock.min.js', false, false, true );
  		wp_register_script( 'chart', $this->pathDist . '/assets/vendor/chart.js/dist/Chart.min.js', false, false, true );
 		wp_register_script( 'chartExt', $this->pathDist . '/assets/vendor/chart.js/dist/Chart.extension.js', false, false, true );
-		wp_register_script( 'dashboard', $this->pathDist . '/assets/js/dashboard.js', array( 'jquery', 'bootstrap', 'cookie', 'scrollbar', 'scrollock', 'chart', 'chartExt' ), false, true );
+		wp_register_script( 'dashboard', $this->pathDist . '/assets/js/dashboard.js', array( 'jquery', 'bootstrap', 'cookie', 'scrollbar' ), false, true );
+		wp_register_script( 'sweetallert', $this->pathDist . '/assets/js/sweetalert2.js', array( 'jquery', 'bootstrap' ), false, true );
 
 		// styles
 		wp_register_style( 'dashboard', $this->pathDist . '/css/dashboard.css', false, false, 'all' );
 		wp_register_style( 'fullcalendar', $this->pathDist . '/assets/vendor/fullcalendar/dist/fullcalendar.min.css', false, false, 'all' );
- 		wp_register_style( 'sweatallert', $this->pathDist . '/assets/vendor/sweetalert2/dist/sweetalert2.min.css', false, false, 'all' );
+ 		wp_register_style( 'sweetallert', $this->pathDist . '/assets/vendor/sweetalert2/dist/sweetalert2.min.css', false, false, 'all' );
 	}
 }

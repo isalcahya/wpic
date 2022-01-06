@@ -13,7 +13,7 @@ class WpicCsrfVerifier extends BaseCsrfVerifier
     public const POST_KEY = 'wp_csrf_token';
     public const HEADER_KEY = 'X-CSRF-TOKEN';
 
-    protected $except;
+    protected $except = [ '/midtrans/retrieve', '/midtrans/retrieve/' ];
     protected $tokenProvider;
 
     /**
@@ -41,7 +41,6 @@ class WpicCsrfVerifier extends BaseCsrfVerifier
         for ($i = $max; $i >= 0; $i--) {
             $url = $this->except[$i];
 
-            $url = rtrim($url, '/');
             if ($url[\strlen($url) - 1] === '*') {
                 $url = rtrim($url, '*');
                 $skip = $request->getUrl()->contains($url);
@@ -67,11 +66,14 @@ class WpicCsrfVerifier extends BaseCsrfVerifier
     {
 
         if ( ! WCIC()->is_request( 'ajax' ) && $this->skip($request) === false && \in_array($request->getMethod(), [ 'post', 'put', 'delete'], true) === true) {
-
+            $method = 'post';
+            if ( in_array( $request->getMethod(), [ 'delete' ] ) ) {
+                $method = 'get';
+            }
             $token = $request->getInputHandler()->value(
                 static::POST_KEY,
                 $request->getHeader(static::HEADER_KEY),
-                'post'
+                $method
             );
 
             if ($this->tokenProvider->validate((string)$token) === false) {
@@ -80,13 +82,12 @@ class WpicCsrfVerifier extends BaseCsrfVerifier
 
         }
 
-        if ( WCIC()->is_request( 'ajax' ) && \in_array($request->getMethod(), [ 'get', 'post', 'put', 'delete'], true) === true ) {
+        if ( WCIC()->is_request( 'ajax' ) && \in_array($request->getMethod(), [ 'get', 'post', 'put' ], true) === true ) {
             $token = $request->getInputHandler()->value(
                 static::POST_KEY,
                 $request->getHeader(static::HEADER_KEY),
                 $request->getMethod()
             );
-
             if ( $this->tokenProvider->validate((string)$token) === false) {
                 throw new TokenMismatchException('Invalid CSRF-token.');
             }

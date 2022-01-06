@@ -3,6 +3,7 @@ use Pecee\SimpleRouter\SimpleRouter as Router;
 use Pecee\Http\Url;
 use Pecee\Http\Response;
 use Pecee\Http\Request;
+use Models\Kelas;
 
 /**
  * Add custom function collections
@@ -108,3 +109,55 @@ function wp_die( $message = "", int $code = 403 ){
     echo $message;
     die();
 }
+
+function get_kelas ( $id = 0 ) {
+    $data = Kelas::find($id);
+    return isset($data->nama_kelas) ? $data->nama_kelas : 0;
+}
+
+function get_all_kelas () {
+    $data = Kelas::all();
+    return $data->toArray();
+}
+
+function get_all_angkatan_kelas () {
+    return array( '7', '8', '9' );
+}
+
+function get_all_nama_tagihan () {
+    return array(
+        'spp' => 'Spp',
+        'pramuka' => 'Pramuka',
+        'pesantren_kilat' => 'Pesantren Kilat',
+    );
+}
+
+function get_all_durasi_tagihan () {
+    return array(
+        'bebas' => 'Bebas',
+        'bulanan' => 'Bulanan',
+        'tahunan' => 'Tahunan',
+    );
+}
+
+function get_target_tagihan () {
+    return array(
+        'all'       => 'Semua Murid',
+        'specific'  => 'Spesifik Murid'
+    );
+}
+
+function get_tagihan_label ( $index ) {
+
+    $label = array(
+        'all'       => 'Semua Murid',
+        'specific'  => 'Spesifik Murid'
+    );
+
+    return isset($label[$index]) ? $label[$index] : '';
+}
+
+function wp_send_json( $message, $code = 200 ){
+    response()->httpCode($code)->json($message);
+}
+

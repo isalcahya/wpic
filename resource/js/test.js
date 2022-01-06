@@ -269,6 +269,118 @@ class test {
 	    });
 
 	    $('.current-year').text(new Date().getFullYear());
+
+	    $('.table-datatable').DataTable();
+
+	    $(document).on('click', '.wp-remove-item', this.deleteRow);
+
+	    $('.dropdown-siswa').select2({
+			placeholder: $('.dropdown-siswa').data('placeholder') || 'Choose Option',
+			allowClear: $('.dropdown-siswa').data('allow-clear') || false,
+			ajax: {
+				url: $w.admin_ajax_url,
+				dataType: 'json',
+				data: function(params) {
+					return {
+						action: 'search_siswa',
+						q: params.term, // search term
+						wp_csrf_token: $w.csrf_token,
+						page: params.page
+					};
+				},
+				processResults: function(data, params) {
+					// parse the results into the format expected by Select2
+					// since we are using custom formatting functions we do not need to
+					// alter the remote JSON data, except to indicate that infinite
+					// scrolling can be used
+					params.page = params.page || 1;
+
+					var product_categories = data.data;
+
+					return {
+						results: product_categories,
+						pagination: {
+							more: (params.page * data.per_page) < data.count
+						}
+					};
+				},
+				quietMillis: 1000, // wait 1000 milliseconds before triggering the request
+				delay: 1000, // wait 1000 milliseconds before triggering the request
+				cache: true
+			},
+			escapeMarkup: function(markup) {
+				return markup; // let our custom formatter work
+			}
+		});
+
+		$('#target_tagihan').change(function(){
+			let $val = $(this).val();
+			if ( 'specific' === $val ) {
+				$('.target-container').show();
+			} else {
+				$('.target-container').hide();
+			}
+		})
+	}
+
+	deleteRow ( e ) {
+		e.preventDefault();
+
+		var $btn = $(this),
+			$type =  $(this).data('type') ? $(this).data('type') : 'warning',
+			$title = $(this).data('title') ? $(this).data('title') : 'Delete',
+			$text = $(this).data('text') ? $(this).data('text') : 'Are you sure want to continue?',
+			$confirmButtonText = $(this).data('confirm-button-text') ? $(this).data('confirm-button-text') : 'Continue',
+			$cancelButtonText = $(this).data('cancel-button-text') ? $(this).data('cancel-button-text') : 'Cancel',
+			ajax_url = $(this).data('target');
+
+		swal({
+			type: $type,
+			title: $title,
+			text: $text,
+			reverseButtons: true,
+			showCancelButton: true,
+			cancelButtonText: $cancelButtonText,
+			confirmButtonText: $confirmButtonText,
+			focusCancel: true,
+			focusConfirm: false,
+			showLoaderOnConfirm: true,
+			preConfirm: function() {
+				return new Promise(function(resolve){
+					$.ajax({
+						url: ajax_url,
+						dataType: 'json',
+						type: 'DELETE',
+					}).done(function(response){
+						if( ! response.success ){
+							swal.showValidationError(response.message);
+						}
+
+						resolve(response);
+					});
+				});
+			},
+			allowOutsideClick: function(){
+				return !swal.isLoading();
+			}
+		}).then((result) => {
+			if( result.value ){
+
+				var response = result.value;
+
+				swal({
+					type: response.type,
+					title: response.title,
+					html: response.message,
+					showCloseButton: false,
+					showConfirmButton: false,
+					timer: 2000,
+					onClose: () => {
+						location.reload( true );
+					},
+				});
+			}
+		});
 	}
 }
 

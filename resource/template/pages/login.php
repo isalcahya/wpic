@@ -80,14 +80,6 @@
 	          </form>
 	        </div>
 	      </div>
-	      <div class="row mt-3">
-	        <div class="col-6">
-	          <a href="#" class="text-gray"><small>Forgot password?</small></a>
-	        </div>
-	        <div class="col-6 text-right">
-	          <a href="<?php echo url( 'register.page' ) ?>" class="text-gray"><small>Create new account</small></a>
-	        </div>
-	      </div>
 	    </div>
 	  </div>
 	</div>
