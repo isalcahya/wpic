@@ -9,7 +9,7 @@ $container = new Container();
 # silence is gold
 define( 'ABSPATH', dirname( __FILE__ ) . '/' );
 
-require_once( ABSPATH . 'wcic-database.php' );
+require_once( ABSPATH . 'wpic-database.php' );
 
 $container['config'] = [
     'driver'    => DBDRIVER,

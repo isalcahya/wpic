@@ -28,7 +28,7 @@ class FrontController {
 	}
 
 	public function admin(){
-		view()->render( 'home' );
+		view()->render( 'spp-home' );
 	}
 
 	public function login(){

@@ -23,8 +23,10 @@ mix.setPublicPath('dist')
 mix.copy( 'resource/external/img/dashboard/', 'dist/assets/img/' );
 mix.copy( 'resource/external/img/front/', 'dist/assets/img/' );
 mix.copy( 'resource/external/js/', 'dist/assets/js/' );
+mix.copy( 'resource/external/dt/', 'dist/assets/datatable/' );
 mix.copy( 'resource/external/vendors/', 'dist/assets/vendor/' );
 mix.copy( 'resource/external/fonts/', 'dist/assets/fonts/' );
+mix.copy( 'resource/external/css/', 'dist/assets/css/' );
 /*
  |--------------------------------------------------------------------------
  | Mix Asset Management

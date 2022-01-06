@@ -127,7 +127,12 @@ class wcic_load_environment {
 						}
 
 					}
-					// DO STUFF
+
+					/**
+					* Action for parse request
+					*/
+					do_action( 'parse_request', $request );
+
 				} else{
 					throw new \Exception("Error Processing Request", 1);
 				}

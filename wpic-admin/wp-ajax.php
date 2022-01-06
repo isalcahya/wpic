@@ -11,7 +11,7 @@ if ( ! defined( 'WP_ADMIN' ) ) {
 }
 define( 'ABSPATH', dirname( dirname( __FILE__ ) ) . '/' );
 /** Loads the Custom Framework Environment and Template */
-require(  dirname( dirname( __FILE__ ) ) . '/wcic-config.php' );
+require(  dirname( dirname( __FILE__ ) ) . '/wpic-config.php' );
 
 /** Allow for cross-domain requests (from the front end). */
 send_origin_headers();
