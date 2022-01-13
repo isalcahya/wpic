@@ -273,6 +273,7 @@ class test {
 	    $('.table-datatable').DataTable();
 
 	    $(document).on('click', '.wp-remove-item', this.deleteRow);
+	    $(document).on('click', '.wp-check-tagihan', this.cekTagihan);
 
 	    $('.dropdown-siswa').select2({
 			placeholder: $('.dropdown-siswa').data('placeholder') || 'Choose Option',
@@ -321,6 +322,48 @@ class test {
 				$('.target-container').hide();
 			}
 		})
+
+		$('.btn-pencarian-siswa').click(function(){
+
+			let param 		= $('input[name="searchsiswa"]').val();
+			let table 		= $('#siswaExistTable');
+
+			if ( ! param ) {
+				alert('parameter tidak boleh kosong');
+				table.hide();
+				return;
+			}
+
+			let tbody 		= table.find('tbody');
+			const base 			= $w.base_url;
+			const current_url 	= base + $w.current_url;
+
+
+			tbody.find('tr').remove();
+			$.post( base + '/siswa/search/', { 'q' : param, 'wp_csrf_token' : $w.csrf_token }, function( data ) {
+				console.log(data)
+				if ( ! data.length ) {
+					alert('Data siswa tidak ditemukan');
+					table.hide();
+					return;
+				}
+				$.each( data, function(d,v){
+					let tr = `
+						<tr>
+							<td>`+v.id+`</td>
+							<td>`+v.nama_lengkap+`</td>
+							<td>`+v.jenis_kelamin+`</td>
+							<td>`+v.alamat+`</td>
+							<td>`+v.status+`</td>
+							<td>`+v.nama_kelas+`</td>
+							<td><a href="`+current_url+`?context=view&id=`+v.id+`" class="btn btn-sm btn-success">Lihat</a></td>
+						</tr>
+					`;
+					tbody.append(tr);
+				})
+				table.show();
+			});
+		})
 	}
 
 	deleteRow ( e ) {
@@ -351,6 +394,65 @@ class test {
 						url: ajax_url,
 						dataType: 'json',
 						type: 'DELETE',
+					}).done(function(response){
+						if( ! response.success ){
+							swal.showValidationError(response.message);
+						}
+
+						resolve(response);
+					});
+				});
+			},
+			allowOutsideClick: function(){
+				return !swal.isLoading();
+			}
+		}).then((result) => {
+			if( result.value ){
+
+				var response = result.value;
+
+				swal({
+					type: response.type,
+					title: response.title,
+					html: response.message,
+					showCloseButton: false,
+					showConfirmButton: false,
+					timer: 2000,
+					onClose: () => {
+						location.reload( true );
+					},
+				});
+			}
+		});
+	}
+
+	cekTagihan ( e ) {
+		e.preventDefault();
+		var $btn = $(this),
+			$type =  $(this).data('type') ? $(this).data('type') : 'warning',
+			$title = $(this).data('title') ? $(this).data('title') : 'Delete',
+			$text = $(this).data('text') ? $(this).data('text') : 'Are you sure want to continue?',
+			$confirmButtonText = $(this).data('confirm-button-text') ? $(this).data('confirm-button-text') : 'Continue',
+			$cancelButtonText = $(this).data('cancel-button-text') ? $(this).data('cancel-button-text') : 'Cancel',
+			ajax_url = $(this).data('target');
+
+		swal({
+			type: $type,
+			title: $title,
+			text: $text,
+			reverseButtons: true,
+			showCancelButton: true,
+			cancelButtonText: $cancelButtonText,
+			confirmButtonText: $confirmButtonText,
+			focusCancel: true,
+			focusConfirm: false,
+			showLoaderOnConfirm: true,
+			preConfirm: function() {
+				return new Promise(function(resolve){
+					$.ajax({
+						url: ajax_url,
+						dataType: 'json',
+						type: 'GET',
 					}).done(function(response){
 						if( ! response.success ){
 							swal.showValidationError(response.message);

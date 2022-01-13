@@ -125,7 +125,6 @@ class wcic_load_environment {
 						if ( count( array_filter($explodeUrl) ) === 1 ) {
 							$request->setRewriteUrl( rtrim($originUrl, '/') . '/dashboard' );
 						}
-
 					}
 
 					/**

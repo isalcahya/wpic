@@ -52,57 +52,6 @@ class DashboardApp {
 		);
 	}
 
-	public function render_data_wali () {
-
-		$context = $id = null;
-
-		if ( input()->exists('context') ) {
-			$context = input()->get('context')->value;
-		}
-
-		if ( input()->exists('id') ) {
-			$id = input()->get('id')->value;
-		}
-
-		$form_param = $wali = array();
-
-		switch ( $context ) {
-			case 'add':
-				$template = 'add-edit.php';
-				$form_url = 'add.wali';
-				$method   = 'post';
-				break;
-			case 'edit':
-				$template = 'add-edit.php';
-				$form_url = 'update.wali';
-				$form_param = array( 'id' => $id );
-				$method   	= 'post';
-				$wali 		= Wali::find( $id );
-				break;
-			default:
-				$form_url 	= '';
-				$template 	= 'main.php';
-				$method   	= 'get';
-				$wali 		= Wali::all();
-				break;
-		}
-
-		$data = array(
-			'template' 		=> $template,
-			'context' 		=> $context,
-			'form_url' 		=> array(
-				'url' 		=> $form_url,
-				'params' 	=> $form_param
-			),
-			'method' 		=> $method,
-			'wali' 			=> $wali,
-			'token' 		=> csrf_token()
-		);
-
-		view()->render( 'parts/dashboard/spp-wali-content', $data );
-
-	}
-
 	public function add_user_dashboard_page( ){
 
 		add_dashboard_page(
@@ -290,6 +239,19 @@ class DashboardApp {
 
 		$select_query = array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'transaksi.id as transaksi_id', 'tagihan.nama_tagihan', 'tagihan.*' );
 
+		$on_process = Siswa::leftJoin('transaksi', function($join) {
+        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+        })
+        ->leftJoin('tagihan', function($join) {
+        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+        })
+        ->select($select_query)
+        ->where( [
+        	[ 'siswa.id', '=', $siswa_id ],
+        	[ 'transaksi.status', '=', 'on-process' ]
+        ] )
+        ->get()->toArray();
+
 		$pending = Siswa::leftJoin('transaksi', function($join) {
         	$join->on('siswa.id', '=', 'transaksi.id_siswa');
         })
@@ -299,7 +261,7 @@ class DashboardApp {
         ->select($select_query)
         ->where( [
         	[ 'siswa.id', '=', $siswa_id ],
-        	[ 'transaksi.has_paid', '=', 0 ]
+        	[ 'transaksi.status', '=', 'pending' ]
         ] )
         ->get()->toArray();
 
@@ -312,13 +274,14 @@ class DashboardApp {
         ->select($select_query)
         ->where([
         	[ 'siswa.id', '=', $siswa_id ],
-        	[ 'transaksi.has_paid', '=', 1 ]
+        	[ 'transaksi.status', '=', 'completed' ]
         ])
         ->get()->toArray();
 
 		$data = array(
 			'context' => $context,
 			'tagihan' => array(
+				'on_process' => $on_process,
 				'pending' 	=> $pending,
 				'completed' => $completed
 			)
@@ -328,9 +291,81 @@ class DashboardApp {
 	}
 
 	public function render_cek_pembayaran ( ) {
+
+		$context = $id = null;
+
+		if ( input()->exists('context') ) {
+			$context = input()->get('context')->value;
+		}
+
+		if ( input()->exists('id') ) {
+			$id = input()->get('id')->value;
+		}
+
+		$form_param = $tagihan = $transaction = array();
+		$form_url 	= '';
+		$template 	= 'main.php';
+		$select_query = array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'transaksi.id as transaksi_id', 'tagihan.nama_tagihan', 'tagihan.*' );
+
+		switch ( $context ) {
+			case 'edit':
+				$template = 'edit.php';
+				$form_url = 'update.pembayaran';
+				$form_param = array( 'id' => $id );
+				$method   	= 'post';
+				$transaction 	= Transaksi::leftJoin('siswa', function($join) {
+		        	$join->on('transaksi.id_siswa', '=', 'siswa.id');
+		        })
+		        ->leftJoin('tagihan', function($join) {
+		        	$join->on('transaksi.id_tagihan', '=', 'tagihan.id');
+		        })
+		        ->select($select_query)
+		        ->where( [
+		        	[ 'transaksi.id', '=', $id ]
+		        ] )
+		        ->first()->toArray();
+				break;
+			case 'view':
+				$template = 'view.php';
+				$tagihan['pending'] = Siswa::leftJoin('transaksi', function($join) {
+		        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+		        })
+		        ->leftJoin('tagihan', function($join) {
+		        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+		        })
+		        ->select($select_query)
+		        ->where( [
+		        	[ 'siswa.id', '=', $id ],
+		        	[ 'transaksi.status', '=', 'pending' ]
+		        ] )
+		        ->get()->toArray();
+
+		        $tagihan['completed'] = Siswa::leftJoin('transaksi', function($join) {
+		        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+		        })
+		        ->leftJoin('tagihan', function($join) {
+		        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+		        })
+		        ->select($select_query)
+		        ->where([
+		        	[ 'siswa.id', '=', $id ],
+		        	[ 'transaksi.status', '=', 'completed' ]
+		        ])
+		        ->get()->toArray();
+				break;
+		}
+
 		$data = array(
-			'context' => 'view'
+			'template' 		=> $template,
+			'context' 		=> $context,
+			'form_url' 		=> array(
+				'url' 		=> $form_url,
+				'params' 	=> $form_param
+			),
+			'tagihan' => $tagihan,
+			'transaction_details' => $transaction
 		);
+
 		view()->render( 'parts/dashboard/spp-cek-pembayaran', $data );
 	}
 

@@ -26,7 +26,7 @@ class SiswaController {
 				'message' => 'Data berhasil dihapus'
 			);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$response = array(
 				'success' => false,
 				'type'    => 'error',
@@ -56,7 +56,7 @@ class SiswaController {
 			}
 			$siswa->update( $forms );
 			redirect( url( $this->default_url ) );
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			dd( $e->getMessage() );
 		}
 	}
@@ -99,10 +99,35 @@ class SiswaController {
 
 			redirect( url( $this->default_url ) );
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 
 			dd( $e->getMessage() );
 		}
+	}
+
+	public function search () {
+
+		$param = input()->post( 'q' )->value;
+
+		$select_query=  array( 'siswa.*', 'kelas.nama_kelas', 'kelas.angkatan_kelas' );
+
+		$siswa = Siswa::leftJoin('kelas', function($join){
+			$join->on( 'siswa.kelas_id', '=', 'kelas.id' );
+		})
+		->select($select_query)
+		->where(function($query) use ($param){
+			$query->where('siswa.id', 'like', "%$param%")
+				->orWhere('siswa.nama_lengkap', 'like', "%$param%");
+		})->get()->toArray();
+
+		wp_send_json( $siswa );
+	}
+
+	public function tagihan ($id) {
+		echo '<pre>';
+		print_r( $id );
+		echo '</pre>';
+		exit();
 	}
 
 }

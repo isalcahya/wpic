@@ -10,6 +10,8 @@ Router::form('register', 'FrontController@register')->name('register.page');
 Router::delete('siswa/delete/{id}', 'SiswaController@delete')->name('delete.siswa')->where([ 'id' => '[0-9]+' ]);
 Router::post('siswa/update/{id}', 'SiswaController@updated')->name('update.siswa')->where([ 'id' => '[0-9]+' ]);
 Router::post('siswa/added/', 'SiswaController@added')->name('add.siswa');
+Router::post('siswa/search/', 'SiswaController@search')->name('search.siswa');
+Router::get('siswa/tagihan/{id}', 'SiswaController@tagihan')->name('tagihan.siswa');
 
 // tagihan
 Router::delete('tagihan/delete/{id}', 'TagihanController@delete')->name('delete.tagihan')->where([ 'id' => '[0-9]+' ]);
@@ -25,3 +27,5 @@ Router::post('kelas/added/', 'KelasController@added')->name('add.kelas');
 Router::get('midtrans/pay/{id}', 'MidtransController@pay')->name('midtrans');
 Router::get('midtrans/view/{id}', 'MidtransController@view')->name('midtrans.view');
 Router::post('midtrans/retrieve/', 'MidtransController@getUpdate')->name('midtrans.retrieve');
+Router::get('midtrans/cek/{id}', 'MidtransController@cekPayment')->name('midtrans.cek');
+Router::get('midtrans/confirm/{id}', 'MidtransController@confirmation')->name('midtrans.confirm');

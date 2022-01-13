@@ -66,7 +66,7 @@ class MidtransController {
 				'snap_token' => $snapToken
 			);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			dd( $e->getMessage() );
 		}
 
@@ -76,6 +76,7 @@ class MidtransController {
 	public function getUpdate () {
 
 		try {
+
 			\Midtrans\Config::$isProduction = false;
 			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
 			$notif = new \Midtrans\Notification();
@@ -93,14 +94,18 @@ class MidtransController {
 			if ($transaction == 'capture') {
 
 				// For credit card transaction, we need to check whether transaction is challenge by FDS or not
-				$transaksi->update( array( 'status' => 'completed', 'has_paid' => 1 ) );
+				$transaksi->update( array( 'status' => 'completed' ) );
+
+			} elseif ( in_array( $transaction, array( 'cancel', 'failure' ) ) ) {
+
+				$transaksi->update( array( 'status' => 'failed' ) );
 
 			} else {
 
-				$transaksi->update( array( 'status' => 'pending', 'has_paid' => 1 ) );
+				$transaksi->update( array( 'status' => 'pending' ) );
 			}
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 
 		}
 
@@ -109,5 +114,98 @@ class MidtransController {
 
 	public function view ( $id ) {
 		echo $id;
+	}
+
+	public function cekPayment ( $transaction_id ) {
+
+		try {
+
+			\Midtrans\Config::$isProduction = false;
+			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
+
+			$order_id = 'spp-o-' . $transaction_id;
+
+			$status_response = \Midtrans\Transaction::status( $order_id );
+
+			$transaction 	= $status_response->transaction_status;
+			$type 			= $status_response->payment_type;
+			$order_id 		= $status_response->order_id;
+			$fraud 			= $status_response->fraud_status;
+
+			$order_format 	= explode( '-', $order_id );
+			$order_id 		= (int) end( $order_format );
+
+			$transaksi = Transaksi::findOrFail( $order_id );
+
+			if ( 'capture' !== $transaction ) {
+				$transaksi->update( array( 'status' => 'pending' ) );
+			}
+
+			$response = array(
+				'success' => true,
+				'type'    => 'success',
+				'title'   => 'Success',
+				'message' => 'Transaksi Ditemukan dan Berhasil Di update'
+			);
+
+		} catch (\Exception $e) {
+
+			$response = array(
+				'success' => false,
+				'type'    => 'error',
+				'title'   => 'Error',
+				'message' => 'Anda Belum Melakukan proses transaksi untuk tagihan ini'
+			);
+
+		}
+
+		wp_send_json( $response );
+	}
+
+	public function confirmation ( $transaction_id ) {
+		try {
+
+			\Midtrans\Config::$isProduction = false;
+			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
+
+			$order_id = 'spp-o-' . $transaction_id;
+
+			$status_response = \Midtrans\Transaction::status( $order_id );
+
+			$transaction 	= $status_response->transaction_status;
+			$type 			= $status_response->payment_type;
+			$order_id 		= $status_response->order_id;
+			$fraud 			= $status_response->fraud_status;
+
+			$order_format 	= explode( '-', $order_id );
+			$order_id 		= (int) end( $order_format );
+
+			$transaksi = Transaksi::findOrFail( $order_id );
+
+			if ( 'capture' !== $transaction ) {
+				throw new Exception( " Status Transaksi Masih dalam prosess input admin " );
+			} else {
+				$transaksi->update( array( 'status' => 'completed' ) );
+			}
+
+			$response = array(
+				'success' => true,
+				'type'    => 'success',
+				'title'   => 'Success',
+				'message' => 'Transaksi Ditemukan dan Sudah Terkonfirmasi di bayar'
+			);
+
+		} catch (\Exception $e) {
+
+			$response = array(
+				'success' => false,
+				'type'    => 'error',
+				'title'   => 'Error',
+				'message' => $e->getMessage()
+			);
+
+		}
+
+		wp_send_json( $response );
 	}
 }

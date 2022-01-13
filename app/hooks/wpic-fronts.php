@@ -127,7 +127,9 @@ class WpicFronts {
 
 		wp_localize_script( 'wpicjs', 'WPIC', array(
 			'admin_ajax_url' => admin_ajax_url( 'wp-ajax.php' ),
-			'csrf_token' => csrf_token()
+			'csrf_token' => csrf_token(),
+			'base_url' => WP_SITE_URL,
+			'current_url' => url()
 		) );
 	}
 

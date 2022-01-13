@@ -26,7 +26,7 @@ class KelasController {
 				'message' => 'Data berhasil dihapus'
 			);
 
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			$response = array(
 				'success' => false,
 				'type'    => 'error',
@@ -56,7 +56,7 @@ class KelasController {
 			}
 			$kelas->update( $forms );
 			redirect( url( $this->default_url ) );
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			dd( $e->getMessage() );
 		}
 	}
@@ -79,7 +79,7 @@ class KelasController {
 		try {
 			$id = Kelas::create( $forms );
 			redirect( url( $this->default_url ) );
-		} catch (Exception $e) {
+		} catch (\Exception $e) {
 			dd( $e->getMessage() );
 		}
 	}
