@@ -7,13 +7,13 @@ define( 'DBDRIVER', 'mysql' );
 define( 'DBHOST', 'localhost' );
 
 /** The name of the database for Apps */
-define( 'DBNAME', 'skripsi__farah' );
+define( 'DBNAME', 'u465753681_farah' );
 
 /** MySQL database username */
-define( 'DBUSER' , 'root' );
+define( 'DBUSER' , 'u465753681_farah' );
 
 /** MySQL database password */
-define( 'DBPASS', '' );
+define( 'DBPASS', 'Mgl120313@' );
 
 // define environment
 define( 'ENV', 'production' );

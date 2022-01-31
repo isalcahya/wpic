@@ -49,7 +49,7 @@
     <header class="header-global">
     <?php do_action( 'wcic_navbar_template' ) ?>
     </header>
-    <main>
+    <main style="height: 100vh; background-image: url(<?php echo get_image_directory() . '/bg-home.jpeg' ?> );">
         <div class="preloader bg-soft flex-column justify-content-center align-items-center">
             <div class="loader-element">
                 <span class="loader-animated-dot"></span>

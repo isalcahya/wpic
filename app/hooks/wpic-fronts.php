@@ -64,9 +64,15 @@ class WpicFronts {
 						$userId = $auth->register($postdata['user_email'], $postdata['user_pass'], $postdata['user_username']);
 						# todo make email confirmation for registered user
 						if ( $userId ) {
+							$auth->admin()->addRoleForUserById($userId, \Delight\Auth\Role::ADMIN);
 							$auth->login( $postdata['user_email'], $postdata['user_pass'] );
 							if ( $auth->check() ) {
-								redirect(WCIC()->get_path('', true).'wp-user/dashboard');
+								if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) ) {
+		 							redirect(redirect_by_role('admin'));
+		 						}
+		 						if ( $auth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
+		 							redirect(redirect_by_role('author'));
+		 						}
 							}
 						}
 			 		}

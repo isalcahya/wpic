@@ -24,8 +24,7 @@ Router::post('kelas/update/{id}', 'KelasController@updated')->name('update.kelas
 Router::post('kelas/added/', 'KelasController@added')->name('add.kelas');
 
 // midtrans
-Router::get('midtrans/pay/{id}', 'MidtransController@pay')->name('midtrans');
-Router::get('midtrans/view/{id}', 'MidtransController@view')->name('midtrans.view');
+Router::get('midtrans/pay/{id_transaksi}', 'MidtransController@pay')->name('midtrans');
 Router::post('midtrans/retrieve/', 'MidtransController@getUpdate')->name('midtrans.retrieve');
-Router::get('midtrans/cek/{id}', 'MidtransController@cekPayment')->name('midtrans.cek');
-Router::get('midtrans/confirm/{id}', 'MidtransController@confirmation')->name('midtrans.confirm');
+Router::get('midtrans/cek/{transaction_id}', 'MidtransController@cekPayment')->name('midtrans.cek');
+Router::get('midtrans/confirm/{transaction_id}', 'MidtransController@confirmation')->name('midtrans.confirm');

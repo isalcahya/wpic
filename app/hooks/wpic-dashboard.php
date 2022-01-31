@@ -26,7 +26,7 @@ class DashboardApp {
 
 		add_dashboard_page(
 			'kelas',
-			__( 'Data Kelas', 'wpic' ),
+			__( 'Data Kelas Baru', 'wpic' ),
 			'manage',
 			'kelas',
 			array( $this, 'render_kelas_spp' ),
@@ -85,7 +85,8 @@ class DashboardApp {
 			$id = input()->get('id')->value;
 		}
 
-		$form_param = $kelas = array();
+		$form_param = $form_url = $kelas = $extra =array();
+		$method 	= '';
 
 		switch ( $context ) {
 			case 'add':
@@ -99,6 +100,11 @@ class DashboardApp {
 				$form_param = array( 'id' => $id );
 				$method   	= 'post';
 				$kelas 		= Kelas::find( $id );
+				break;
+			case 'view':
+				$template = 'view.php';
+				$kelas 		= Kelas::find( $id );
+				$extra 		= Kelas::get_columns_fillable();
 				break;
 			default:
 				$form_url 	= '';
@@ -117,6 +123,7 @@ class DashboardApp {
 			),
 			'method' 		=> $method,
 			'kelas' 		=> $kelas,
+			'extra' 		=> $extra,
 			'token' 		=> csrf_token()
 		);
 
@@ -135,7 +142,10 @@ class DashboardApp {
 			$id = input()->get('id')->value;
 		}
 
-		$form_param = $tagihan = array();
+		$form_param = $form_url = $tagihan = $extra =array();
+		$method 	= '';
+
+		$select_query = array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.kelas_id', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'transaksi.id as transaksi_id', 'tagihan.nama_tagihan', 'tagihan.*' );
 
 		switch ( $context ) {
 			case 'add':
@@ -149,6 +159,22 @@ class DashboardApp {
 				$form_param = array( 'id' => $id );
 				$method   	= 'post';
 				$tagihan 	= Tagihan::find($id);
+				break;
+			case 'view':
+				$template = 'view.php';
+				$tagihan  = Tagihan::find( $id );
+				$extra 	  = Transaksi::leftJoin('siswa', function($join) {
+		        	$join->on('transaksi.id_siswa', '=', 'siswa.id');
+		        })
+		        ->leftJoin('tagihan', function($join) {
+		        	$join->on('transaksi.id_tagihan', '=', 'tagihan.id');
+		        })
+		        ->select($select_query)
+		        ->where( [
+		        	[ 'transaksi.id_tagihan', '=', $id ],
+		        	[ 'transaksi.status', '=', 'completed' ]
+		        ] )
+		        ->get()->toArray();
 				break;
 			default:
 				$form_url = '';
@@ -167,6 +193,7 @@ class DashboardApp {
 			),
 			'method' 		=> $method,
 			'tagihan' 		=> $tagihan,
+			'extra' 		=> $extra,
 			'token' 		=> csrf_token()
 		);
 
@@ -185,7 +212,8 @@ class DashboardApp {
 			$id = input()->get('id')->value;
 		}
 
-		$form_param = $siswa = $privelege = array();
+		$form_param = $form_url = $siswa = $extra = $privelege = array();
+		$method 	= '';
 
 		switch ( $context ) {
 			case 'add':
@@ -200,6 +228,10 @@ class DashboardApp {
 				$method   	= 'post';
 				$siswa 		= Siswa::find( $id );
 				$privelege 	= Users::find( $siswa->id_privelege );
+				break;
+			case 'view':
+				$template = 'view.php';
+				$siswa 		= Siswa::find( $id );
 				break;
 			default:
 				$form_url 	= '';
@@ -233,61 +265,109 @@ class DashboardApp {
 			$context = input()->get('context')->value;
 		}
 
+		if ( input()->exists('id') ) {
+			$id = input()->get('id')->value;
+		}
+
 		$user_id 	= get_current_user_id();
 		$siswa 		= Siswa::select('id')->where( 'id_privelege', $user_id )->first()->toArray();
 		$siswa_id 	= $siswa['id'];
 
 		$select_query = array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'transaksi.id as transaksi_id', 'tagihan.nama_tagihan', 'tagihan.*' );
 
-		$on_process = Siswa::leftJoin('transaksi', function($join) {
-        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
-        })
-        ->leftJoin('tagihan', function($join) {
-        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
-        })
-        ->select($select_query)
-        ->where( [
-        	[ 'siswa.id', '=', $siswa_id ],
-        	[ 'transaksi.status', '=', 'on-process' ]
-        ] )
-        ->get()->toArray();
+		if ( $context === 'view' ) {
 
-		$pending = Siswa::leftJoin('transaksi', function($join) {
-        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
-        })
-        ->leftJoin('tagihan', function($join) {
-        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
-        })
-        ->select($select_query)
-        ->where( [
-        	[ 'siswa.id', '=', $siswa_id ],
-        	[ 'transaksi.status', '=', 'pending' ]
-        ] )
-        ->get()->toArray();
+			$transaksi = Transaksi::find( $id );
 
-        $completed = Siswa::leftJoin('transaksi', function($join) {
-        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
-        })
-        ->leftJoin('tagihan', function($join) {
-        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
-        })
-        ->select($select_query)
-        ->where([
-        	[ 'siswa.id', '=', $siswa_id ],
-        	[ 'transaksi.status', '=', 'completed' ]
-        ])
-        ->get()->toArray();
+			if ( empty( $transaksi ) ) {
+				throw new \Exception("Transaksi tidak ditemukan", 1);
+			}
 
-		$data = array(
-			'context' => $context,
-			'tagihan' => array(
-				'on_process' => $on_process,
-				'pending' 	=> $pending,
-				'completed' => $completed
-			)
-		);
+			$template = 'view-transaksi';
 
-		view()->render( 'parts/user-dashboard/spp-tagihan-content', $data );
+			\Midtrans\Config::$isProduction = ( 'production' === ENV );
+			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
+
+			$order_id = 'spp-o-' . $id;
+
+			$status_response = (array) \Midtrans\Transaction::status( $order_id );
+
+			$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'tagihan.nama_tagihan', 'tagihan.*' );
+			$transaction 	= Transaksi::leftJoin('siswa', function($join) {
+	        	$join->on('transaksi.id_siswa', '=', 'siswa.id');
+	        })
+	        ->leftJoin('tagihan', function($join) {
+	        	$join->on('transaksi.id_tagihan', '=', 'tagihan.id');
+	        })
+	        ->select($select_query)
+	        ->where( [
+	        	[ 'transaksi.id', '=', $id ]
+	        ] )
+	        ->first()->toArray();
+
+			$data = array(
+				'midtrans' => array(
+					'no_rekening_tujuan' 	=> current($status_response['va_numbers'])->va_number,
+					'nama_rekening_tujuan' 	=> current($status_response['va_numbers'])->bank,
+					'type_pembayaran' 		=> $status_response['payment_type'],
+					'status_pembayaran' 	=> $status_response['transaction_status'],
+				),
+				'tagihan' => $transaction
+			);
+		} else {
+
+			$template = 'spp-tagihan-content';
+
+			$on_process = Siswa::leftJoin('transaksi', function($join) {
+	        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+	        })
+	        ->leftJoin('tagihan', function($join) {
+	        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+	        })
+	        ->select($select_query)
+	        ->where( [
+	        	[ 'siswa.id', '=', $siswa_id ],
+	        	[ 'transaksi.status', '=', 'on-process' ]
+	        ] )
+	        ->get()->toArray();
+
+			$pending = Siswa::leftJoin('transaksi', function($join) {
+	        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+	        })
+	        ->leftJoin('tagihan', function($join) {
+	        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+	        })
+	        ->select($select_query)
+	        ->where( [
+	        	[ 'siswa.id', '=', $siswa_id ],
+	        	[ 'transaksi.status', '=', 'pending' ]
+	        ] )
+	        ->get()->toArray();
+
+	        $completed = Siswa::leftJoin('transaksi', function($join) {
+	        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
+	        })
+	        ->leftJoin('tagihan', function($join) {
+	        	$join->on('tagihan.id', '=', 'transaksi.id_tagihan');
+	        })
+	        ->select($select_query)
+	        ->where([
+	        	[ 'siswa.id', '=', $siswa_id ],
+	        	[ 'transaksi.status', '=', 'completed' ]
+	        ])
+	        ->get()->toArray();
+
+			$data = array(
+				'context' => $context,
+				'tagihan' => array(
+					'on_process' => $on_process,
+					'pending' 	=> $pending,
+					'completed' => $completed
+				)
+			);
+		}
+
+		view()->render( "parts/user-dashboard/{$template}", $data );
 	}
 
 	public function render_cek_pembayaran ( ) {
@@ -370,7 +450,8 @@ class DashboardApp {
 	}
 
 	public function render_user_dashboard(){
-		view()->render( 'parts/dashboard/main-content' );
+		$siswa = Siswa::where( 'id_privelege', get_current_user_id() )->first()->toArray();
+		view()->render( 'parts/user-dashboard/main-content', [ 'siswa' => $siswa ] );
 	}
 
  	public static function dashboard_content_example(){

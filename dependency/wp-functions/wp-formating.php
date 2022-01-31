@@ -4492,9 +4492,9 @@ function map_deep( $value, $callback ) {
  */
 function wp_parse_str( $string, &$array ) {
 	parse_str( $string, $array );
-	if ( get_magic_quotes_gpc() ) {
-		$array = stripslashes_deep( $array );
-	}
+	// if ( get_magic_quotes_gpc() ) {
+	// 	$array = stripslashes_deep( $array );
+	// }
 	/**
 	 * Filters the array of variables derived from a parsed string.
 	 *

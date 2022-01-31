@@ -36,6 +36,11 @@ class FrontController {
 		view()->render( 'pages/login' );
 	}
 
+	public function loginBaru(){
+		do_action( 'wcic-render-login' );
+		view()->render( 'pages/login' );
+	}
+
 	public function register(){
 		do_action( 'wcic-setup-register-page' );
 		view()->render( 'pages/register' );

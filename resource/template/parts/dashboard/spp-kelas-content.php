@@ -3,7 +3,7 @@
 		<div class="card">
 			<div class="card-header">
 				<div class="d-flex justify-content-end">
-					<?php if ( ! in_array( $context, array( 'add', 'delete', 'edit' ) ) ): ?>
+					<?php if ( ! in_array( $context, array( 'add', 'delete', 'edit', 'view' ) ) ): ?>
 						<a href="<?php echo url( null, null, [ 'context' => 'add' ] ) ?>" class="btn btn-primary mb-4">
 							<svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" class="feather feather-plus">
 								<line x1="12" y1="5" x2="12" y2="19"></line>

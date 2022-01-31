@@ -5,10 +5,10 @@
             <img class="navbar-brand-light common" src="<?php echo get_dist_directory(); ?>/assets/img/brand/dark.svg" height="35" alt="Logo dark">
         </a>
         <div class="d-none d-lg-block d-lg-none">
-            <a href="<?php echo url( 'login.page' ); ?>" class="btn btn-md btn-secondary animate-up-2"><i class="fas fa-paper-plane mr-2"></i> Login</a>
+            <a href="<?php echo url( 'login.page' ); ?>" class="btn btn-md btn-secondary animate-up-2"><i class="fas fa-paper-plane mr-2"></i> Login Sebgai Wali / Admin</a>
         </div>
         <div class="d-none d-lg-block d-lg-none">
-            <a href="<?php echo url( 'register.page' ); ?>" class="btn btn-md btn-secondary animate-up-2"><i class="fas fa-paper-plane mr-2"></i> Daftar</a>
+            <a href="<?php echo url( 'register.page' ); ?>" class="btn btn-md btn-secondary animate-up-2"><i class="fas fa-paper-plane mr-2"></i> Daftar Menjadi Admin</a>
         </div>
         <div class="d-flex d-lg-none align-items-center">
             <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbar_global"

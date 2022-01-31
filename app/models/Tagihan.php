@@ -13,6 +13,7 @@ class Tagihan extends Model {
 			'nama_tagihan' => '%s',
 			'jangka_waktu_tagihan' => '%s',
 			'angkatan_kelas' => '%d',
+			'bulan' => '%s',
 			'tahun' => '%s',
 			'target' => '%s',
 			'total_tagihan' => '%s',

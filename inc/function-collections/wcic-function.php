@@ -287,7 +287,7 @@ function current_user_can( $capability, ...$args ) {
 	return $arr4;
 }
 
-function wpic_remove_duplicate_array_by( $selector = 'id', &$data ){
+function wpic_remove_duplicate_array_by( $selector = 'id', &$data = '' ){
 	$_data = array();
 	foreach ($data as $v) {
 	if (isset($_data[$v[$selector]])) {

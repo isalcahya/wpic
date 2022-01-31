@@ -29,7 +29,7 @@
   <link rel="canonical" href="https://www.creative-tim.com/product/impact-design-system" />
 
   <!-- Favicon -->
-  <link rel="icon" href="<?php echo get_dist_directory(); ?>/assets/img/brand/favicon.png" type="image/png">
+  <link rel="icon" href="<?php echo get_image_directory() . '/bg-logo.jpeg'?>" type="image/jpeg">
   <?php wcic_head(); ?>
 </head>
 
@@ -40,7 +40,7 @@
       <!-- Brand -->
       <div class="sidenav-header  d-flex  align-items-center">
         <a class="navbar-brand" href="">
-          <img src="<?php echo get_dist_directory(); ?>/assets/img/brand/dark.svg" height="40" class="navbar-brand-img" alt="...">
+          <img src="<?php echo get_image_directory() . '/bg-logo.jpeg'?>" height="70" class="navbar-brand-img" alt="..." style="max-height: 10rem;" >
         </a>
         <div class=" ml-auto ">
           <!-- Sidenav toggler -->

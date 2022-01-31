@@ -15,14 +15,14 @@ class MidtransController {
 		try {
 
 			// Set your Merchant Server Key
-			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
-			\Midtrans\Config::$clientKey = 'SB-Mid-client-1yQTBnMF78t4l6oG';
+			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
+			\Midtrans\Config::$clientKey = MIDTRANS_CLIENT_KEY;
 			// Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
-			\Midtrans\Config::$isProduction = false;
+			\Midtrans\Config::$isProduction = ( 'production' === ENV );
 			// Set sanitization on (default)
 			\Midtrans\Config::$isSanitized = true;
 			// Set 3DS transaction for credit card to true
-			\Midtrans\Config::$is3ds = true;
+			\Midtrans\Config::$is3ds = false;
 
 			$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'tagihan.nama_tagihan', 'tagihan.*' );
 			$transaction 	= Transaksi::leftJoin('siswa', function($join) {
@@ -63,7 +63,9 @@ class MidtransController {
 			$snapToken = \Midtrans\Snap::getSnapToken($params);
 
 			$data = array(
-				'snap_token' => $snapToken
+				'snap_token' => $snapToken,
+				'client_key' => MIDTRANS_CLIENT_KEY,
+				'is_production' => ( 'production' === ENV )
 			);
 
 		} catch (\Exception $e) {
@@ -77,8 +79,8 @@ class MidtransController {
 
 		try {
 
-			\Midtrans\Config::$isProduction = false;
-			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
+			\Midtrans\Config::$isProduction = ( 'production' === ENV );
+			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
 			$notif = new \Midtrans\Notification();
 
 			$transaction 	= $notif->transaction_status;
@@ -91,11 +93,13 @@ class MidtransController {
 
 			$transaksi = Transaksi::findOrFail( $order_id );
 
-			if ($transaction == 'capture') {
-
+			if ( in_array( $transaction , array( 'settlement', 'capture' ) )  ) {
 				// For credit card transaction, we need to check whether transaction is challenge by FDS or not
 				$transaksi->update( array( 'status' => 'completed' ) );
-
+			}
+			elseif ( $transaction === 'pending' ) {
+				// processed
+				$transaksi->update( array( 'status' => 'on-process' ) );
 			} elseif ( in_array( $transaction, array( 'cancel', 'failure' ) ) ) {
 
 				$transaksi->update( array( 'status' => 'failed' ) );
@@ -112,16 +116,12 @@ class MidtransController {
 		wp_send_json( ['result'=>'ok'] );
 	}
 
-	public function view ( $id ) {
-		echo $id;
-	}
-
 	public function cekPayment ( $transaction_id ) {
 
 		try {
 
-			\Midtrans\Config::$isProduction = false;
-			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
+			\Midtrans\Config::$isProduction = ( 'production' === ENV );
+			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
 
 			$order_id = 'spp-o-' . $transaction_id;
 
@@ -137,10 +137,20 @@ class MidtransController {
 
 			$transaksi = Transaksi::findOrFail( $order_id );
 
-			if ( 'capture' !== $transaction ) {
+			if ( in_array( $transaction , array( 'settlement', 'capture' ) )  ) {
+				// For credit card transaction, we need to check whether transaction is challenge by FDS or not
+				$transaksi->update( array( 'status' => 'completed' ) );
+			}
+			elseif ( $transaction === 'pending' ) {
+				// processed
+				$transaksi->update( array( 'status' => 'on-process' ) );
+			} elseif ( in_array( $transaction, array( 'cancel', 'failure' ) ) ) {
+				// failed
+				$transaksi->update( array( 'status' => 'failed' ) );
+			} else {
+				// pending
 				$transaksi->update( array( 'status' => 'pending' ) );
 			}
-
 			$response = array(
 				'success' => true,
 				'type'    => 'success',
@@ -165,8 +175,8 @@ class MidtransController {
 	public function confirmation ( $transaction_id ) {
 		try {
 
-			\Midtrans\Config::$isProduction = false;
-			\Midtrans\Config::$serverKey = 'SB-Mid-server-dNQyfhyfOPr52DOn-R8JicVz';
+			\Midtrans\Config::$isProduction = ( 'production' === ENV );
+			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
 
 			$order_id = 'spp-o-' . $transaction_id;
 
@@ -182,8 +192,8 @@ class MidtransController {
 
 			$transaksi = Transaksi::findOrFail( $order_id );
 
-			if ( 'capture' !== $transaction ) {
-				throw new Exception( " Status Transaksi Masih dalam prosess input admin " );
+			if ( 'settlement' !== $transaction ) {
+				throw new \Exception( " Status Transaksi Masih dalam prosess input admin " );
 			} else {
 				$transaksi->update( array( 'status' => 'completed' ) );
 			}

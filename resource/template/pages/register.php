@@ -7,8 +7,7 @@
       <div class="header-body text-center mb-7">
         <div class="row justify-content-center">
           <div class="col-xl-5 col-lg-6 col-md-8 px-5">
-            <h1 class="text-white"><?php _e( 'Create an account', 'WPIC' ) ?></h1>
-            <p class="text-lead text-white"><?php _e( 'Use these awesome forms to login or create new account in your project for free.', 'WPIC' ) ?></p>
+            <h1 class="text-white"><?php _e( 'Buat Akun Sebagai Admin', 'WPIC' ) ?></h1>
           </div>
         </div>
       </div>
@@ -34,7 +33,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                   </div>
-                  <input class="form-control" placeholder="Name" type="text" name="user.username">
+                  <input class="form-control" placeholder="Nama" type="text" name="user.username">
                 </div>
               </div>
               <div class="form-group">
@@ -56,16 +55,10 @@
               <div class="text-muted font-italic"><small><?php _e( 'password strength :', 'WPIC' ) ?><span class="text-success font-weight-700">strong</span></small></div>
               <div class="row my-4">
                 <div class="col-12">
-                  <div class="custom-control custom-control-alternative custom-checkbox">
-                    <input class="custom-control-input" id="customCheckRegister" type="checkbox">
-                    <label class="custom-control-label" for="customCheckRegister">
-                      <span class="text-muted"><?php _e( 'I agree with the', 'WPIC' ) ?> <a href="#!"><?php _e( 'Privacy Policy', 'WPIC' ) ?></a></span>
-                    </label>
-                  </div>
                 </div>
               </div>
               <div class="text-center">
-                <button type="submit" class="btn btn-primary mt-4"><?php _e( 'Create account', 'WPIC' ) ?></button>
+                <button type="submit" class="btn btn-primary mt-4"><?php _e( 'Buat Akun', 'WPIC' ) ?></button>
               </div>
             </form>
           </div>

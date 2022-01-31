@@ -127,8 +127,8 @@ function get_all_angkatan_kelas () {
 function get_all_nama_tagihan () {
     return array(
         'spp' => 'Spp',
-        'pramuka' => 'Pramuka',
-        'pesantren_kilat' => 'Pesantren Kilat',
+        // 'pramuka' => 'Pramuka',
+        // 'pesantren_kilat' => 'Pesantren Kilat',
     );
 }
 
@@ -147,6 +147,28 @@ function get_target_tagihan () {
     );
 }
 
+function get_bulan_tagihan () {
+    return array(
+        'januari' => 'Januari',
+        'februari'=>'Februari',
+        'maret' => 'Maret',
+        'april' => 'April',
+        'mei' => 'Mei',
+        'juni' => 'Juni',
+        'juli' => 'Juli',
+        'agustus' => 'Agustus',
+        'septermber' => 'September',
+        'oktober' => 'Oktober',
+        'november' => 'November',
+        'desember' => 'Desember'
+    );
+}
+
+function get_bulan_name ( $name = '' ) {
+    $bulan = get_bulan_tagihan();
+    return isset( $bulan[$name] ) ? $bulan[$name] : '';
+}
+
 function get_tagihan_label ( $index ) {
 
     $label = array(
@@ -155,6 +177,13 @@ function get_tagihan_label ( $index ) {
     );
 
     return isset($label[$index]) ? $label[$index] : '';
+}
+
+function rupiah($angka){
+
+    $hasil_rupiah = "Rp " . number_format($angka,2,',','.');
+    return $hasil_rupiah;
+
 }
 
 function wp_send_json( $message, $code = 200 ){

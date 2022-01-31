@@ -31,8 +31,17 @@
 	</div>
 	<div class="form-row">
 		<div class="form-group col-md-4">
-			<label>Tahun</label>
-			<input type="text" name="tahun" class="form-control" placeholder="Tahun" value="" />
+			<label>Bulan Tagihan</label>
+			<select name="bulan" class="form-control" id="bulan_tagihan">
+				<option value="" selected="selected" disabled="disabled">--- Pilih Bulan ---</option>
+				<?php foreach (get_bulan_tagihan() as $key => $value): ?>
+					<option value="<?php echo $key ?>"> <?php echo $value ?> </option>
+				<?php endforeach ?>
+			</select>
+		</div>
+		<div class="form-group col-md-4">
+			<label>Tahun Ajaran</label>
+			<input type="text" name="tahun" class="form-control" placeholder="Tahun Ajaran" value="" />
 		</div>
 		<div class="form-group col-md-4">
 			<label>Target</label>

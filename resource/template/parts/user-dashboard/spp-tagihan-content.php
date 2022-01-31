@@ -11,8 +11,9 @@
 						<tr>
 							<th>No</th>
 							<th>Nama Tagihan</th>
-							<th>Jangka Waktu</th>
-							<th>Tahun</th>
+							<th>Type Tagihan</th>
+							<th>Bulan</th>
+							<th>Tahun Ajaran</th>
 							<th>Total Tagihan</th>
 							<th>Action</th>
 						</tr>
@@ -25,16 +26,19 @@
 									<td><?php echo $i; ?></td>
 									<td><?php echo $value['nama_tagihan'] ?></td>
 									<td><?php echo $value['jangka_waktu_tagihan'] ?></td>
+									<td><?php echo get_bulan_name($value['bulan']) ?></td>
 									<td><?php echo $value['tahun_ajaran'] ?></td>
-									<td><?php echo $value['total_tagihan'] ?></td>
+									<td><?php echo rupiah($value['total_tagihan']) ?></td>
 									<td>
-										<a href="<?php echo url('midtrans', ['id'=>$value['transaksi_id']]) ?>" class="btn btn-sm btn-danger">Prosess Bayar</a>
-										<a href="javascript:void(0);"
+										<a href="<?php echo url('midtrans', ['id_transaksi'=>$value['transaksi_id']]) ?>" class="btn btn-sm btn-danger">Prosess Bayar</a>
+										<!-- <a href="javascript:void(0);"
 											class="wp-check-tagihan btn btn-sm btn-primary"
-											data-target="<?php echo url('midtrans.cek', [ 'id' => $value['transaksi_id'] ], [ 'wp_csrf_token' => csrf_token() ] ) ?>"
+											data-target="
+											<?php
+											// echo url('midtrans.cek', [ 'transaction_id' => $value['transaksi_id'] ], [ 'wp_csrf_token' => csrf_token() ] ) ?>"
 											data-text="Apakah Anda Yakin Sudah Melakukan Proses Ini ?"
 											data-title="Update Proses"
-											>Update Prosess</a>
+											>Update Prosess</a> -->
 									</td>
 								</tr>
 							<?php endforeach ?>
@@ -62,9 +66,10 @@
 							<thead>
 								<tr>
 									<th scope="col">No</th>
+									<th scope="col">Nama Tagihan</th>
+									<th scope="col">Type Tagihan</th>
+									<th>Bulan</th>
 									<th scope="col">Tahun Ajaran</th>
-									<th scope="col">Jenis Pembayaran</th>
-									<th scope="col">Jangka Waktu Tagihan</th>
 									<th scope="col">Total Tagihan</th>
 									<th scope="col">Action</th>
 								</tr>
@@ -75,17 +80,19 @@
 										?>
 										<tr>
 											<td><?php echo $i; ?></td>
-											<td><?php echo $value['tahun_ajaran'] ?></td>
 											<td><?php echo $value['nama_tagihan'] ?></td>
 											<td><?php echo $value['jangka_waktu_tagihan'] ?></td>
-											<td><?php echo $value['total_tagihan'] ?></td>
+											<td><?php echo get_bulan_name($value['bulan']) ?></td>
+											<td><?php echo $value['tahun_ajaran'] ?></td>
+											<td><?php echo rupiah($value['total_tagihan']) ?></td>
 											<td>
+												<a href="<?php echo url( null, null, [ 'context' => 'view', 'id' => $value['transaksi_id'] ] ) ?>" class="btn btn-sm btn-success">Lihat</a>
 												<a href="javascript:void(0);"
-											class="wp-check-tagihan btn btn-sm btn-primary"
-											data-target="<?php echo url('midtrans.confirm', [ 'id' => $value['transaksi_id'] ], [ 'wp_csrf_token' => csrf_token() ] ) ?>"
-											data-text="Apakah Anda Yakin Sudah Melakukan Proses Pembayaran ?"
-											data-title="Cek Proses Pembayaran"
-											>Konfirmasi Bayar</a>
+												class="wp-check-tagihan btn btn-sm btn-primary"
+												data-target="<?php echo url('midtrans.confirm', [ 'transaction_id' => $value['transaksi_id'] ], [ 'wp_csrf_token' => csrf_token() ] ) ?>"
+												data-text="Apakah Anda Yakin Sudah Melakukan Proses Pembayaran ?"
+												data-title="Cek Proses Pembayaran"
+												>Konfirmasi Bayar</a>
 											</td>
 										</tr>
 									<?php endforeach ?>
@@ -99,11 +106,12 @@
 							<thead>
 								<tr>
 									<th scope="col">No</th>
+									<th scope="col">Nama Tagihan</th>
+									<th scope="col">Type Tagihan</th>
+									<th>Bulan</th>
 									<th scope="col">Tahun Ajaran</th>
-									<th scope="col">Jenis Pembayaran</th>
 									<th scope="col">Total Bayar</th>
 									<th scope="col">Tanggal Pembayaran</th>
-									<th scope="col">Status Pembayaran</th>
 									<th scope="col">Action</th>
 								</tr>
 							</thead>
@@ -113,13 +121,14 @@
 										?>
 										<tr>
 											<td><?php echo $i; ?></td>
-											<td><?php echo $value['tahun_ajaran'] ?></td>
 											<td><?php echo $value['nama_tagihan'] ?></td>
-											<td><?php echo $value['total_tagihan'] ?></td>
+											<td><?php echo $value['jangka_waktu_tagihan'] ?></td>
+											<td><?php echo get_bulan_name($value['bulan']) ?></td>
+											<td><?php echo $value['tahun_ajaran'] ?></td>
+											<td><?php echo rupiah($value['total_tagihan']) ?></td>
 											<td><?php echo $value['updated_at'] ?></td>
-											<td><?php echo $value['status_transaksi'] ?></td>
 											<td>
-												<a href="<?php echo url('midtrans.view', ['id'=>$value['transaksi_id']]) ?>" class="btn btn-sm btn-success">Lihat</a>
+												<a href="<?php echo url( null, null, [ 'context' => 'view', 'id' => $value['transaksi_id'] ] ) ?>" class="btn btn-sm btn-success">Lihat</a>
 											</td>
 										</tr>
 									<?php endforeach ?>
