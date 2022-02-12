@@ -364,6 +364,22 @@ class test {
 				table.show();
 			});
 		})
+
+		$('.dt-quick-filter').on( 'change', function(){
+			let column  = $(this).data('column');
+			let val 	= $(this).val();
+			$('.table-datatable').DataTable().column(column).search(val).draw();
+		})
+
+		$('.cetak-laporan').on( 'click', function(){
+			const base  = $w.base_url + '/cetak-laporan/';
+			let url = new URL(base);
+			url.searchParams.append('bulan', $('.dt-quick-filter.bulan').val());
+			url.searchParams.append('status-tagihan', $('.dt-quick-filter.status-transaksi').val());
+			url.searchParams.append('kelas', $('.dt-quick-filter.kelas').val());
+			url.searchParams.append('tahun-ajaran', $('.dt-quick-filter.angkatan').val());
+			window.location.href = url.href;
+		})
 	}
 
 	deleteRow ( e ) {

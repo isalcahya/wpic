@@ -7,9 +7,14 @@ define( 'WP_PLUGIN_URL', WP_SITE_URL . '/dependency' ); // full url, no trailing
 
 /** Sets up Apps vars and included files. */
 require_once( ABSPATH . 'wpic-database.php' );
-
-define( 'MIDTRANS_SERVER_KEY', 'Mid-server-0msLXl9EauC2k_8TRNPYbInF' );
-define( 'MIDTRANS_CLIENT_KEY', 'Mid-client-qb10Ayowu5FtsINe' );
+$server_key = 'SB-Mid-server-ArcPDtmVoycpgLTFEqSqH8YW';
+$client_key = 'SB-Mid-client-Q0uA9usoKz4Pe01w';
+if ( 'production' === ENV  ) {
+	$server_key = 'Mid-server-2h2_aeTUenrRd77V9At_Nzrj';
+	$client_key = 'Mid-client-whhaZBs4Qj1b3n8X';
+}
+define( 'MIDTRANS_SERVER_KEY', $server_key );
+define( 'MIDTRANS_CLIENT_KEY', $client_key );
 
 /** Sets up Apps vars and included files. */
 require_once( ABSPATH . 'wpic-settings.php' );

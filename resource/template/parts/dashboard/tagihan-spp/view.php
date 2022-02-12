@@ -10,7 +10,7 @@ use Models\Kelas;
 		</tr>
 	</thead>
 	<tbody>
-		<?php foreach ( $tagihan->first()->toArray() as $key => $value ): ?>
+		<?php foreach ( $tagihan->toArray() as $key => $value ): ?>
 			<tr>
 				<td> <?php echo ucfirst(implode( ' ', explode( '_', $key ) ));  ?></td>
 				<?php if ( $key === 'total_tagihan' ): ?>

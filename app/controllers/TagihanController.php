@@ -3,9 +3,12 @@ namespace Controllers;
 use Models\Tagihan;
 use Models\Siswa;
 use Models\Transaksi;
+use Delight\Cookie\Session;
+
 /**
- *
+ * Fungsi untuk menangani proses crud tagihan
  */
+
 class TagihanController {
 
 	public $default_url = 'wp-admin/tagihan-spp/';
@@ -59,7 +62,8 @@ class TagihanController {
 			$tagihan->update( $forms );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {
-			dd( $e->getMessage() );
+			Session::set( 'msg.create.data', array( 'type' => 'error', 'msg' => $e->getMessage() ) );
+			redirect( url( $this->default_url ) );
 		}
 	}
 
@@ -100,10 +104,15 @@ class TagihanController {
 				Transaksi::create( $args );
 			}
 
+			Session::set( 'msg.create.data', 'sukses menambahkan data' );
+
 			redirect( url( $this->default_url ) );
 
 		} catch (\Exception $e) {
-			dd( $e->getMessage() );
+
+			Session::set( 'msg.create.data', array( 'type' => 'error', 'msg' => $e->getMessage() ) );
+
+			redirect( url( $this->default_url ) );
 		}
 	}
 }

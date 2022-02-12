@@ -28,6 +28,7 @@
   },
   "homepage": "https://github.com/isalcahya/sistem-monitoring-pkl#readme",
   "dependencies": {
+    "cross-env": "^7.0.3",
     "laravel-mix": "^5.0.9"
   },
   "devDependencies": {

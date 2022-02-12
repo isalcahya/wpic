@@ -23,8 +23,19 @@ Router::delete('kelas/delete/{id}', 'KelasController@delete')->name('delete.kela
 Router::post('kelas/update/{id}', 'KelasController@updated')->name('update.kelas')->where([ 'id' => '[0-9]+' ]);
 Router::post('kelas/added/', 'KelasController@added')->name('add.kelas');
 
+// user manage
+Router::delete('user/delete/{id}', 'UserController@delete')->name('delete.user')->where([ 'id' => '[0-9]+' ]);
+Router::post('user/update/{id}', 'UserController@updated')->name('update.user')->where([ 'id' => '[0-9]+' ]);
+Router::post('user/added/', 'UserController@added')->name('add.user');
+
 // midtrans
 Router::get('midtrans/pay/{id_transaksi}', 'MidtransController@pay')->name('midtrans');
 Router::post('midtrans/retrieve/', 'MidtransController@getUpdate')->name('midtrans.retrieve');
 Router::get('midtrans/cek/{transaction_id}', 'MidtransController@cekPayment')->name('midtrans.cek');
 Router::get('midtrans/confirm/{transaction_id}', 'MidtransController@confirmation')->name('midtrans.confirm');
+
+// transaction siswa
+Router::delete('transaction/delete/{id}', 'TransactionController@delete')->name('delete.transaction')->where([ 'id' => '[0-9]+' ]);
+
+// Cetak Laporan
+Router::get('cetak-laporan', 'LaporanController@cetak')->name('cetak.laporam');

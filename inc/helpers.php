@@ -4,6 +4,8 @@ use Pecee\Http\Url;
 use Pecee\Http\Response;
 use Pecee\Http\Request;
 use Models\Kelas;
+use Delight\Cookie\Session;
+use Dompdf\Dompdf;
 
 /**
  * Add custom function collections
@@ -111,8 +113,13 @@ function wp_die( $message = "", int $code = 403 ){
 }
 
 function get_kelas ( $id = 0 ) {
-    $data = Kelas::find($id);
-    return isset($data->nama_kelas) ? $data->nama_kelas : 0;
+    $data = Kelas::find($id)->toArray();
+    return isset($data['nama_kelas']) ? $data['nama_kelas'] : 0;
+}
+
+function get_kelas_id ( $nama = 0 ) {
+    $data = Kelas::where('nama_kelas', $nama)->first()->toArray();
+    return isset($data['id']) ? $data['id'] : 0;
 }
 
 function get_all_kelas () {
@@ -122,6 +129,30 @@ function get_all_kelas () {
 
 function get_all_angkatan_kelas () {
     return array( '7', '8', '9' );
+}
+
+function get_all_roles () {
+    return array(
+        1 => 'admin',
+        2 => 'siswa',
+        3 => 'tu'
+    );
+}
+
+function get_role_name ( $id = 0 ) {
+    $roles = get_all_roles();
+    return $roles[$id];
+}
+
+function get_list_tahun_ajaran() {
+    return array(
+        '2021/2022',
+        '2022/2023',
+        '2023/2024',
+        '2025/2026',
+        '2026/2027',
+        '2026/2028'
+    );
 }
 
 function get_all_nama_tagihan () {
@@ -180,7 +211,7 @@ function get_tagihan_label ( $index ) {
 }
 
 function rupiah($angka){
-
+    $angka = (float) $angka;
     $hasil_rupiah = "Rp " . number_format($angka,2,',','.');
     return $hasil_rupiah;
 
@@ -188,5 +219,42 @@ function rupiah($angka){
 
 function wp_send_json( $message, $code = 200 ){
     response()->httpCode($code)->json($message);
+}
+
+function render_sukses_notification () {
+    if ( Session::has( 'msg.create.data' ) ) :
+    $value = Session::get( 'msg.create.data' );
+    Session::delete( 'msg.create.data' );
+    $type = 'alert-success';
+    if ( is_array( $value ) ) {
+        $type = 'alert-danger';
+        $value = $value['msg'];
+    }
+    ?>
+        <div class="alert <?php echo $type ?>" role="alert">
+            <span><?php echo $value ?><span/>
+        </div>
+        <br/>
+    <?php
+    endif;
+}
+
+function render_cetak_pdf ($data) {
+
+    // instantiate and use the dompdf class
+    $dompdf = new Dompdf();
+
+    $content = view()->fetch( 'cetak-pembayaran', $data );
+
+    $dompdf->loadHtml($content);
+
+    // (Optional) Setup the paper size and orientation
+    $dompdf->setPaper('A4', 'landscape');
+
+    // Render the HTML as PDF
+    $dompdf->render();
+
+    // Output the generated PDF to Browser
+    $dompdf->stream( 'cetak.pdf', array( 'Attachment' => false ) );
 }
 

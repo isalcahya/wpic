@@ -3,7 +3,7 @@
 	<div class="form-row mb-4">
 		<div class="form-group col-md-4">
 			<label>Nama Tagihan</label>
-			<select name="nama_tagihan" class="form-control">
+			<select name="nama_tagihan" class="form-control" oninvalid="this.setCustomValidity('Nama Tagihan Wajib Diisi')" oninput="this.setCustomValidity('')" required>
 				<option value="" selected="selected" disabled="disabled">--- Pilih Nama Tagihan ---</option>
 				<?php foreach (get_all_nama_tagihan() as $key => $value): ?>
 					<option value="<?php echo $key ?>"> <?php echo $value ?> </option>
@@ -12,7 +12,7 @@
 		</div>
 		<div class="form-group col-md-4">
 			<label>Jangka Waktu Tagihan</label>
-			<select name="jangka_waktu_tagihan" class="form-control">
+			<select name="jangka_waktu_tagihan" class="form-control" oninvalid="this.setCustomValidity('Jangka Waktu Tagihan Wajib Diisi')" oninput="this.setCustomValidity('')" required>
 				<option value="" selected="selected" disabled="disabled">--- Pilih Jangka Waktu Tagihan ---</option>
 				<?php foreach (get_all_durasi_tagihan() as $key => $value): ?>
 					<option value="<?php echo $key ?>"> <?php echo $value ?> </option>
@@ -41,7 +41,12 @@
 		</div>
 		<div class="form-group col-md-4">
 			<label>Tahun Ajaran</label>
-			<input type="text" name="tahun" class="form-control" placeholder="Tahun Ajaran" value="" />
+			<select name="tahun" class="form-control" id="bulan_tagihan">
+				<option value="" selected="selected" disabled="disabled">--- Pilih Tahun Ajaran ---</option>
+				<?php foreach (get_list_tahun_ajaran() as $key => $value): ?>
+					<option value="<?php echo $value ?>"> <?php echo $value ?> </option>
+				<?php endforeach ?>
+			</select>
 		</div>
 		<div class="form-group col-md-4">
 			<label>Target</label>
@@ -54,7 +59,7 @@
 		</div>
 		<div class="form-group col-md-4">
 			<label>Total Biaya</label>
-			<input type="text" name="total_tagihan" class="form-control" placeholder="Total Biaya" value="" />
+			<input type="text" name="total_tagihan" class="form-control" placeholder="Total Biaya" value="" oninvalid="this.setCustomValidity('Total Tagihan Wajib Diisi')" oninput="this.setCustomValidity('')" required />
 		</div>
 	</div>
 	<div class="form-row">

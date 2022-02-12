@@ -33,7 +33,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="ni ni-hat-3"></i></span>
                   </div>
-                  <input class="form-control" placeholder="Nama" type="text" name="user.username">
+                  <input class="form-control" placeholder="Nama" type="text" name="user.username" required>
                 </div>
               </div>
               <div class="form-group">
@@ -41,7 +41,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="ni ni-email-83"></i></span>
                   </div>
-                  <input class="form-control" placeholder="Email" type="email" name="user.email">
+                  <input class="form-control" placeholder="Email" type="email" name="user.email" required>
                 </div>
               </div>
               <div class="form-group">
@@ -49,7 +49,7 @@
                   <div class="input-group-prepend">
                     <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
                   </div>
-                  <input class="form-control" placeholder="Password" type="password" name="user.pass">
+                  <input class="form-control" placeholder="Password" type="password" name="user.pass" required>
                 </div>
               </div>
               <div class="text-muted font-italic"><small><?php _e( 'password strength :', 'WPIC' ) ?><span class="text-success font-weight-700">strong</span></small></div>

@@ -10,6 +10,8 @@ class MidtransController {
 
 	public $default_url = 'wp-admin/tagihan-spp/';
 
+	// Proses generate built in snap midtrans
+	// Ketika user menekan tombol bayar paramater id_transaksi digunakan untuk me generate order_id yang dibutuhkan untuk midtrans
 	public function pay ( $id_transaksi ) {
 
 		try {
@@ -17,6 +19,7 @@ class MidtransController {
 			// Set your Merchant Server Key
 			\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
 			\Midtrans\Config::$clientKey = MIDTRANS_CLIENT_KEY;
+
 			// Set to Development/Sandbox Environment (default). Set to true for Production Environment (accept real transaction).
 			\Midtrans\Config::$isProduction = ( 'production' === ENV );
 			// Set sanitization on (default)
@@ -75,6 +78,7 @@ class MidtransController {
 		view()->render( 'parts/user-dashboard/midtrans', $data );
 	}
 
+	// Fungsi untuk menerima notifikasi dari midtrans ketika ada pembayaran | Webhook
 	public function getUpdate () {
 
 		try {
@@ -116,6 +120,8 @@ class MidtransController {
 		wp_send_json( ['result'=>'ok'] );
 	}
 
+	// Fungsi untuk mengirim request payement info dari client
+	// Fungsi ini mengembalikan data transaksi yang telah dilakukan client sebelumnya
 	public function cekPayment ( $transaction_id ) {
 
 		try {
@@ -172,6 +178,8 @@ class MidtransController {
 		wp_send_json( $response );
 	}
 
+	// Fungsi ini untuk mengirim permintaan konfirmasi transaksi yang tidak terupdate / nyangkut
+	// Parameter: $transaction_id | id transaksi yang di simpan di database server
 	public function confirmation ( $transaction_id ) {
 		try {
 

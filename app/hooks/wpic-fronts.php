@@ -26,6 +26,7 @@ class WpicFronts {
  		return 'Data Siswa';
  	}
 
+ 	// Fungsi ini untuk menangani proses ketika ada request login / register dari client
  	public function front_post_callback( $page, $postdata ){
  		try {
 
@@ -83,19 +84,18 @@ class WpicFronts {
  			}
 		}
 		catch (\Delight\Auth\InvalidEmailException $e) {
-		    die('Invalid email address');
+			$_POST['warning'][] = 'Email Tidak Ditemukan!';
 		}
 		catch (\Delight\Auth\InvalidPasswordException $e) {
-		    die('Invalid password');
+		    $_POST['warning'][] = 'Password Salah!';
 		}
 		catch (\Delight\Auth\UserAlreadyExistsException $e) {
-		    die('User already exists');
+		    $_POST['warning'][] = 'User Sudah Ada!';
 		}
 		catch (\Delight\Auth\TooManyRequestsException $e) {
-		    die('Too many requests');
+		    $_POST['warning'][] = 'Terlalu Banyak Request';
 		}
 		catch (\Exception $e) {
-		    die($e->getMessage());
 		}
  	}
 

@@ -52,12 +52,21 @@
 	          <form role="form" action="<?= url() ?>" method="POST">
 	          	<input type="hidden" name="wp_csrf_token" value="<?= csrf_token(); ?>">
 	          	<input type="hidden" name="_login" value="1">
+	          	<?php if (isset( $_POST['warning'] )):
+	          		$warning = $_POST['warning'];
+	          		unset($_POST['warning'])?>
+	          	<div class="alert alert-danger" role="alert">
+	          		<?php foreach ($warning as $key => $value): ?>
+	          			<span><?php echo $value ?><span/>
+      				<?php endforeach ?>
+				</div>
+				<?php endif; ?>
 	            <div class="form-group mb-3">
 	              <div class="input-group input-group-merge input-group-alternative">
 	                <div class="input-group-prepend">
 	                  <span class="input-group-text"><i class="ni ni-email-83"></i></span>
 	                </div>
-	                <input class="form-control" placeholder="Email" type="email" name="user_email">
+	                <input class="form-control" placeholder="Email" type="email" name="user_email" oninvalid="this.setCustomValidity('Jangan Lupa email tidak boleh kosong guys! ')" oninput="this.setCustomValidity('')" required="required">
 	              </div>
 	            </div>
 	            <div class="form-group">
@@ -65,7 +74,7 @@
 	                <div class="input-group-prepend">
 	                  <span class="input-group-text"><i class="ni ni-lock-circle-open"></i></span>
 	                </div>
-	                <input class="form-control" placeholder="Password" type="password" name="user_pass">
+	                <input class="form-control" placeholder="Password" type="password" name="user_pass" oninvalid="this.setCustomValidity('Password juga nggak boleh kosong ya')" oninput="this.setCustomValidity('')" required="required">
 	              </div>
 	            </div>
 	            <div class="custom-control custom-control-alternative custom-checkbox">

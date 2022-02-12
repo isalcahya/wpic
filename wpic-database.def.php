@@ -16,4 +16,4 @@ define( 'DBUSER' , 'u465753681_farah' );
 define( 'DBPASS', 'Mgl120313@' );
 
 // define environment
-define( 'ENV', 'production' );
+define( 'ENV', 'development' );

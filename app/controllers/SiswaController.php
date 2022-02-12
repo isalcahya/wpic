@@ -1,8 +1,10 @@
 <?php
 namespace Controllers;
 use Models\Siswa;
+use Delight\Cookie\Session;
+
 /**
- *
+ * Fungsi untuk menangani proses crud siswa
  */
 class SiswaController {
 
@@ -57,7 +59,11 @@ class SiswaController {
 			$siswa->update( $forms );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {
-			dd( $e->getMessage() );
+			Session::set( 'msg.create.data', array(
+				'type' => 'error',
+				'msg'  => $message
+			) );
+			redirect( url( $this->default_url ) );
 		}
 	}
 
@@ -97,11 +103,24 @@ class SiswaController {
 
 			$id = Siswa::create( $forms );
 
+			Session::set( 'msg.create.data', 'sukses menambahkan data' );
+
 			redirect( url( $this->default_url ) );
 
-		} catch (\Exception $e) {
-
-			dd( $e->getMessage() );
+		} catch (\Delight\Auth\InvalidEmailException $e) {
+			$message = 'Email Tidak Ditemukan!';
+		} catch (\Delight\Auth\InvalidPasswordException $e) {
+		    $message = 'Password Salah!';
+		} catch (\Delight\Auth\UserAlreadyExistsException $e) {
+		    $message = 'Gagal Menyimpan Data | User Dengan Email '.$privelege['email']->value.' Sudah Ada!';
+		} catch (\Delight\Auth\TooManyRequestsException $e) {
+		    $message = 'Terlalu Banyak Request';
+		} finally {
+			Session::set( 'msg.create.data', array(
+				'type' => 'error',
+				'msg'  => $message
+			) );
+			redirect( url( $this->default_url ) );
 		}
 	}
 

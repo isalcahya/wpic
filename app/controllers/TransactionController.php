@@ -1,25 +1,29 @@
 <?php
 namespace Controllers;
-use Models\Kelas;
+use Models\Tagihan;
+use Models\Siswa;
+use Models\Transaksi;
 use Delight\Cookie\Session;
 
 /**
- * Fungsi untuk menangani proses crud kelas
+ * Fungsi untuk menangani proses crud tagihan
  */
-class KelasController {
 
-	public $default_url = 'wp-admin/kelas/';
+class TransactionController {
+
+	public $default_url = 'wp-admin/tagihan-spp/';
 
 	public function __construct(){
 
 	}
 
 	public function delete ( $id ) {
+
 		try {
 
-			$kelas = Kelas::find($id);
+			$tagihan = Transaksi::find($id);
 
-			$kelas->delete();
+			$tagihan->delete();
 
 			$response = array(
 				'success' => true,
@@ -42,8 +46,8 @@ class KelasController {
 
 	public function updated ( $id ) {
 		try {
-			$kelas 				= Kelas::findOrFail($id);
-			$default_columns 	= Kelas::get_columns_fillable();
+			$tagihan 			= Tagihan::findOrFail($id);
+			$default_columns 	= Tagihan::get_columns_fillable();
 			$forms 				= array();
 			$columns 			= array_intersect_key( $default_columns, input()->all() );
 			foreach ( $columns as $key => $value ) {
@@ -56,16 +60,16 @@ class KelasController {
 				}
 				$forms[$key] = $the_value;
 			}
-			$kelas->update( $forms );
+			$tagihan->update( $forms );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {
-			Session::set( 'msg.create.data', array( 'type' => 'error', 'msg' => $e->getMessage() ) );
+			Session::set( 'msg.create.data', $e->getMessage() );
 			redirect( url( $this->default_url ) );
 		}
 	}
 
 	public function added ( ) {
-		$default_columns 	= Kelas::get_columns_fillable();
+		$default_columns 	= Tagihan::get_columns_fillable();
 		$forms 				= array();
 		$columns 			= array_intersect_key( $default_columns, input()->all() );
 		foreach ( $columns as $key => $value ) {
@@ -80,13 +84,34 @@ class KelasController {
 		}
 
 		try {
-			$id = Kelas::create( $forms );
+
+			$tagihan = Tagihan::create( $forms );
+			$target = array();
+
+			if ( 'specific' === $forms['target'] ) {
+
+				$target[] = Siswa::find(input()->post( 'pilihan_siswa' )->value)->toArray();
+
+			} else {
+
+				$target = Siswa::all()->toArray();
+			}
+
+			foreach ( $target as $key => $siswa ) {
+				$args = array(
+					'id_siswa' 		=> (int) $siswa['id'],
+					'id_tagihan' 	=> (int) $tagihan->id
+				);
+				Transaksi::create( $args );
+			}
+
 			Session::set( 'msg.create.data', 'sukses menambahkan data' );
+
 			redirect( url( $this->default_url ) );
+
 		} catch (\Exception $e) {
 			Session::set( 'msg.create.data', array( 'type' => 'error', 'msg' => $e->getMessage() ) );
 			redirect( url( $this->default_url ) );
 		}
 	}
-
 }

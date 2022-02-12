@@ -18,7 +18,7 @@
 			<div class="card-body">
 				<?php
 					render_sukses_notification();
-					include( 'tagihan-spp/' . $template );
+					include( 'user/' . $template );
 				?>
 			</div>
 		</div>

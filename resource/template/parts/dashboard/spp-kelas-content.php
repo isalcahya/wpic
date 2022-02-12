@@ -17,6 +17,7 @@
 			</div>
 			<div class="card-body">
 				<?php
+					render_sukses_notification();
 					include( 'kelas/' . $template );
 				?>
 			</div>

@@ -1,12 +1,12 @@
 <?php
 namespace Controllers;
-use Models\Kelas;
+use Models\User;
 use Delight\Cookie\Session;
 
 /**
  * Fungsi untuk menangani proses crud kelas
  */
-class KelasController {
+class UserController {
 
 	public $default_url = 'wp-admin/kelas/';
 
@@ -17,7 +17,7 @@ class KelasController {
 	public function delete ( $id ) {
 		try {
 
-			$kelas = Kelas::find($id);
+			$kelas = User::find($id);
 
 			$kelas->delete();
 
@@ -42,8 +42,8 @@ class KelasController {
 
 	public function updated ( $id ) {
 		try {
-			$kelas 				= Kelas::findOrFail($id);
-			$default_columns 	= Kelas::get_columns_fillable();
+			$kelas 				= User::findOrFail($id);
+			$default_columns 	= User::get_columns_fillable();
 			$forms 				= array();
 			$columns 			= array_intersect_key( $default_columns, input()->all() );
 			foreach ( $columns as $key => $value ) {
@@ -65,7 +65,7 @@ class KelasController {
 	}
 
 	public function added ( ) {
-		$default_columns 	= Kelas::get_columns_fillable();
+		$default_columns 	= User::get_columns_fillable();
 		$forms 				= array();
 		$columns 			= array_intersect_key( $default_columns, input()->all() );
 		foreach ( $columns as $key => $value ) {
@@ -80,7 +80,7 @@ class KelasController {
 		}
 
 		try {
-			$id = Kelas::create( $forms );
+			$id = User::create( $forms );
 			Session::set( 'msg.create.data', 'sukses menambahkan data' );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {

@@ -3,11 +3,11 @@
 		<tr>
 			<th>No</th>
 			<th>Nama Tagihan</th>
-			<th>Jangka Waktu</th>
+			<th>Bulan</th>
 			<th>Tahun</th>
 			<th>Kelas</th>
 			<th>Target</th>
-			<th>Total Tagihan</th>
+			<th>Jumlah Tagihan</th>
 			<th>Action</th>
 		</tr>
 	</thead>
@@ -17,7 +17,7 @@
 				<tr>
 					<td> <?php echo $i++; ?> </td>
 					<td> <?php echo $value->nama_tagihan ?> </td>
-					<td> <?php echo $value->jangka_waktu_tagihan ?> </td>
+					<td> <?php echo $value->bulan ?> </td>
 					<td> <?php echo $value->tahun ?> </td>
 					<td> <?php echo $value->angkatan_kelas ?> </td>
 					<td> <?php echo get_tagihan_label( $value->target )  ?> </td>

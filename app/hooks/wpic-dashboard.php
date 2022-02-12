@@ -22,6 +22,7 @@ class DashboardApp {
 		add_action( 'render_main_dashboard', array( $this, 'render_data_siswa' ) );
 	}
 
+	// Fungsi ini untuk membuat menu dan halaman baru untuk sisi admin dashboard
 	public function add_menu_dashboard_page (  ) {
 
 		add_dashboard_page(
@@ -50,8 +51,83 @@ class DashboardApp {
 			array( $this, 'render_cek_pembayaran' ),
 			'ni ni-shop'
 		);
+
+		add_dashboard_page(
+			'laporan-pembayaran',
+			__( 'Laporan Transaksi Siswa', 'wpic' ),
+			'manage',
+			'laporan-pembayaran',
+			array( $this, 'render_laporan_pembayaran' ),
+			'ni ni-shop'
+		);
+
+		add_dashboard_page(
+			'kelola-user',
+			__( 'Kelola User', 'wpic' ),
+			'manage',
+			'kelola-user',
+			array( $this, 'render_kelola_user' ),
+			'ni ni-shop'
+		);
 	}
 
+	public function render_kelola_user () {
+		$context = $id = null;
+
+		if ( input()->exists('context') ) {
+			$context = input()->get('context')->value;
+		}
+
+		if ( input()->exists('id') ) {
+			$id = input()->get('id')->value;
+		}
+
+		$form_param = $form_url = $user = $extra =array();
+		$method 	= '';
+
+		switch ( $context ) {
+			case 'add':
+				$template = 'add-edit.php';
+				$form_url = 'add.user';
+				$method   = 'post';
+				break;
+			case 'edit':
+				$template = 'add-edit.php';
+				$form_url = 'update.user';
+				$form_param = array( 'id' => $id );
+				$method   	= 'post';
+				$user 		= Users::find( $id );
+				break;
+			case 'view':
+				$template = 'view.php';
+				$user 		= Users::find( $id );
+				$extra 		= Users::get_columns_fillable();
+				break;
+			default:
+				$form_url 	= '';
+				$template 	= 'main.php';
+				$method   	= 'get';
+				$user 		= Users::all();
+				break;
+		}
+
+		$data = array(
+			'template' 		=> $template,
+			'context' 		=> $context,
+			'form_url' 		=> array(
+				'url' 		=> $form_url,
+				'params' 	=> $form_param
+			),
+			'method' 		=> $method,
+			'user' 			=> $user,
+			'extra' 		=> $extra,
+			'token' 		=> csrf_token()
+		);
+
+		view()->render( 'parts/dashboard/spp-user-content', $data );
+	}
+
+	// Fungsi ini untuk membuat menu dan halaman baru untuk sisi user dashboard
 	public function add_user_dashboard_page( ){
 
 		add_dashboard_page(
@@ -73,6 +149,23 @@ class DashboardApp {
 		);
 	}
 
+	function render_laporan_pembayaran ( ) {
+
+		$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'siswa.kelas_id', 'transaksi.status as status_transaksi', 'tagihan.nama_tagihan', 'tagihan.*' );
+		$transaction 	= Transaksi::leftJoin('siswa', function($join) {
+        	$join->on('transaksi.id_siswa', '=', 'siswa.id');
+        })
+        ->leftJoin('tagihan', function($join) {
+        	$join->on('transaksi.id_tagihan', '=', 'tagihan.id');
+        })
+        ->select($select_query)
+        ->get()->toArray();
+
+		view()->render( 'parts/dashboard/spp-laporan-pembayaran', array( 'transactions' => $transaction ) );
+	}
+
+	// Fungsi ini diproses ketika menu kelas di tekan
+	// Dan fungsi ini menampilkan output html sesuai kontextnya
 	public function render_kelas_spp () {
 
 		$context = $id = null;
@@ -130,6 +223,8 @@ class DashboardApp {
 		view()->render( 'parts/dashboard/spp-kelas-content', $data );
 	}
 
+	// Fungsi ini diproses ketika menu tagihan di tekan
+	// Dan fungsi ini menampilkan output html sesuai kontextnya
 	public function render_tagihan_spp () {
 
 		$context = $id = null;
@@ -200,6 +295,8 @@ class DashboardApp {
 		view()->render( 'parts/dashboard/spp-tagihan-spp-content', $data );
 	}
 
+	// Fungsi ini diproses ketika menu kelas di tekan
+	// Dan fungsi ini menampilkan output html sesuai kontextnya
 	public function render_data_siswa () {
 
 		$context = $id = null;
@@ -257,6 +354,8 @@ class DashboardApp {
 		view()->render( 'parts/dashboard/spp-user-manage-content', $data );
 	}
 
+	// Fungsi ini diproses ketika menu tagihan dari sisi user dashboard di tekan
+	// Dan fungsi ini menampilkan output html sesuai kontextnya
 	public function render_user_tagihan_view () {
 
 		$context = $id = null;
@@ -370,6 +469,8 @@ class DashboardApp {
 		view()->render( "parts/user-dashboard/{$template}", $data );
 	}
 
+	// Fungsi ini diproses ketika menu cek pembayaran dari sisi admin dashboard di tekan
+	// Dan fungsi ini menampilkan output html sesuai kontextnya
 	public function render_cek_pembayaran ( ) {
 
 		$context = $id = null;
@@ -406,6 +507,54 @@ class DashboardApp {
 		        ->first()->toArray();
 				break;
 			case 'view':
+
+				if ( isset( $_GET['details-id'] ) ) {
+
+					$transaction_id = (int) $_GET['details-id'];
+
+					$transaksi = Transaksi::find( $transaction_id );
+
+					if ( empty( $transaksi ) ) {
+						throw new \Exception("Transaksi tidak ditemukan", 1);
+					}
+
+					$template = 'view-transaksi';
+
+					\Midtrans\Config::$isProduction = ( 'production' === ENV );
+					\Midtrans\Config::$serverKey = MIDTRANS_SERVER_KEY;
+
+					$order_id = 'spp-o-' . $id;
+
+					$status_response = (array) \Midtrans\Transaction::status( $order_id );
+
+					$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'transaksi.status as status_transaksi', 'tagihan.nama_tagihan', 'tagihan.*' );
+					$transaction 	= Transaksi::leftJoin('siswa', function($join) {
+			        	$join->on('transaksi.id_siswa', '=', 'siswa.id');
+			        })
+			        ->leftJoin('tagihan', function($join) {
+			        	$join->on('transaksi.id_tagihan', '=', 'tagihan.id');
+			        })
+			        ->select($select_query)
+			        ->where( [
+			        	[ 'transaksi.id', '=', $id ]
+			        ] )
+			        ->first()->toArray();
+
+					$data = array(
+						'midtrans' => array(
+							'no_rekening_tujuan' 	=> current($status_response['va_numbers'])->va_number,
+							'nama_rekening_tujuan' 	=> current($status_response['va_numbers'])->bank,
+							'type_pembayaran' 		=> $status_response['payment_type'],
+							'status_pembayaran' 	=> $status_response['transaction_status'],
+						),
+						'tagihan' => $transaction
+					);
+
+					view()->render( 'parts/user-dashboard/view-transaksi', $data );
+
+					exit();
+				}
+
 				$template = 'view.php';
 				$tagihan['pending'] = Siswa::leftJoin('transaksi', function($join) {
 		        	$join->on('siswa.id', '=', 'transaksi.id_siswa');
