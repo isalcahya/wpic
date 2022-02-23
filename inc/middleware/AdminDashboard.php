@@ -16,7 +16,7 @@ class AdminDashboard implements IMiddleware {
 		if ( ! $wpauth->isLoggedIn() ) {
 			response()->redirect($redirect);
 		}
-		if ( $wpauth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
+		if ( has_role( 2 ) ) {
 			redirect(redirect_by_role('author'));
 		}
 	}

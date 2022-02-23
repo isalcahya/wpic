@@ -1,14 +1,14 @@
 <?php
 namespace Controllers;
-use Models\User;
+use Models\Users;
 use Delight\Cookie\Session;
 
 /**
- * Fungsi untuk menangani proses crud kelas
+ * Fungsi untuk menangani proses crud kelola-user
  */
 class UserController {
 
-	public $default_url = 'wp-admin/kelas/';
+	public $default_url = 'wp-admin/kelola-user/';
 
 	public function __construct(){
 
@@ -17,9 +17,9 @@ class UserController {
 	public function delete ( $id ) {
 		try {
 
-			$kelas = User::find($id);
+			$users = Users::find($id);
 
-			$kelas->delete();
+			$users->delete();
 
 			$response = array(
 				'success' => true,
@@ -42,8 +42,8 @@ class UserController {
 
 	public function updated ( $id ) {
 		try {
-			$kelas 				= User::findOrFail($id);
-			$default_columns 	= User::get_columns_fillable();
+			$users 				= Users::findOrFail($id);
+			$default_columns 	= Users::get_columns_fillable();
 			$forms 				= array();
 			$columns 			= array_intersect_key( $default_columns, input()->all() );
 			foreach ( $columns as $key => $value ) {
@@ -56,7 +56,12 @@ class UserController {
 				}
 				$forms[$key] = $the_value;
 			}
-			$kelas->update( $forms );
+			$forms['roles_mask'] = $forms['role_mask'];
+			unset($forms['role_mask']);
+			$forms['passwordString'] = $forms['password'];
+			$forms['password'] = \password_hash($forms['passwordString'], \PASSWORD_DEFAULT);
+
+			$users->update( $forms );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {
 			Session::set( 'msg.create.data', array( 'type' => 'error', 'msg' => $e->getMessage() ) );
@@ -65,7 +70,7 @@ class UserController {
 	}
 
 	public function added ( ) {
-		$default_columns 	= User::get_columns_fillable();
+		$default_columns 	= Users::get_columns_fillable();
 		$forms 				= array();
 		$columns 			= array_intersect_key( $default_columns, input()->all() );
 		foreach ( $columns as $key => $value ) {
@@ -80,7 +85,16 @@ class UserController {
 		}
 
 		try {
-			$id = User::create( $forms );
+			$auth = get_wpauth();
+			$userId = $auth->register($forms['email'], $forms['password'], $forms['username']);
+			# todo make email confirmation for registered user
+			if ( $userId ) {
+				$auth->admin()->addRoleForUserById($userId, (int) $forms['role_mask']);
+				$users = Users::find($userId);
+				$users->update( array(
+					'passwordString' => $forms['password']
+				) );
+			}
 			Session::set( 'msg.create.data', 'sukses menambahkan data' );
 			redirect( url( $this->default_url ) );
 		} catch (\Exception $e) {

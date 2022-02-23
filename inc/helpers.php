@@ -113,8 +113,11 @@ function wp_die( $message = "", int $code = 403 ){
 }
 
 function get_kelas ( $id = 0 ) {
-    $data = Kelas::find($id)->toArray();
-    return isset($data['nama_kelas']) ? $data['nama_kelas'] : 0;
+    if ( ! empty($data = Kelas::find($id)) ) {
+        $data = $data->toArray();
+        return isset($data['nama_kelas']) ? $data['nama_kelas'] : 0;
+    }
+    return '';
 }
 
 function get_kelas_id ( $nama = 0 ) {
@@ -256,5 +259,9 @@ function render_cetak_pdf ($data) {
 
     // Output the generated PDF to Browser
     $dompdf->stream( 'cetak.pdf', array( 'Attachment' => false ) );
+}
+
+function has_role ( int $role ) {
+    return ( $role === $_SESSION['auth_roles'] );
 }
 

@@ -16,4 +16,4 @@ define( 'DBUSER' , 'root' );
 define( 'DBPASS', '' );
 
 // define environment
-define( 'ENV', 'development' );
+define( 'ENV', 'production' );

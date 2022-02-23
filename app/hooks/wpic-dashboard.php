@@ -25,14 +25,16 @@ class DashboardApp {
 	// Fungsi ini untuk membuat menu dan halaman baru untuk sisi admin dashboard
 	public function add_menu_dashboard_page (  ) {
 
-		add_dashboard_page(
-			'kelas',
-			__( 'Data Kelas Baru', 'wpic' ),
-			'manage',
-			'kelas',
-			array( $this, 'render_kelas_spp' ),
-			'ni ni-shop'
-		);
+		if ( has_role( 1 ) ) {
+			add_dashboard_page(
+				'kelas',
+				__( 'Data Kelas Baru', 'wpic' ),
+				'manage',
+				'kelas',
+				array( $this, 'render_kelas_spp' ),
+				'ni ni-shop'
+			);
+		}
 
 		add_dashboard_page(
 			'tagihan-spp',
@@ -43,14 +45,16 @@ class DashboardApp {
 			'ni ni-shop'
 		);
 
-		add_dashboard_page(
-			'cek-pembayaran',
-			__( 'Cek Pembayaran', 'wpic' ),
-			'manage',
-			'cek-pembayaran',
-			array( $this, 'render_cek_pembayaran' ),
-			'ni ni-shop'
-		);
+		if ( has_role( 1 ) ) {
+			add_dashboard_page(
+				'cek-pembayaran',
+				__( 'Cek Pembayaran', 'wpic' ),
+				'manage',
+				'cek-pembayaran',
+				array( $this, 'render_cek_pembayaran' ),
+				'ni ni-shop'
+			);
+		}
 
 		add_dashboard_page(
 			'laporan-pembayaran',
@@ -61,14 +65,16 @@ class DashboardApp {
 			'ni ni-shop'
 		);
 
-		add_dashboard_page(
-			'kelola-user',
-			__( 'Kelola User', 'wpic' ),
-			'manage',
-			'kelola-user',
-			array( $this, 'render_kelola_user' ),
-			'ni ni-shop'
-		);
+		if ( has_role( 1 ) ) {
+			add_dashboard_page(
+				'kelola-user',
+				__( 'Kelola User', 'wpic' ),
+				'manage',
+				'kelola-user',
+				array( $this, 'render_kelola_user' ),
+				'ni ni-shop'
+			);
+		}
 	}
 
 	public function render_kelola_user () {
@@ -107,7 +113,7 @@ class DashboardApp {
 				$form_url 	= '';
 				$template 	= 'main.php';
 				$method   	= 'get';
-				$user 		= Users::all();
+				$user 		= Users::where('roles_mask', '!=', '2')->get();
 				break;
 		}
 
@@ -151,7 +157,7 @@ class DashboardApp {
 
 	function render_laporan_pembayaran ( ) {
 
-		$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.tahun_ajaran', 'siswa.kelas_id', 'transaksi.status as status_transaksi', 'tagihan.nama_tagihan', 'tagihan.*' );
+		$select_query 	= array( 'siswa.nama_lengkap', 'siswa.nis', 'siswa.nama_wali', 'siswa.jenis_kelamin', 'siswa.kelas_id', 'transaksi.status as status_transaksi', 'tagihan.*' );
 		$transaction 	= Transaksi::leftJoin('siswa', function($join) {
         	$join->on('transaksi.id_siswa', '=', 'siswa.id');
         })

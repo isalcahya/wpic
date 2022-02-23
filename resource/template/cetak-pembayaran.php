@@ -39,7 +39,7 @@ tr:nth-child(even) {
    <tr>
       <td> <?php echo $value['nama_lengkap'] ?> </td>
       <td> <?php echo $value['nama_tagihan'] ?> </td>
-      <td> <?php echo $value['tahun_ajaran'] ?> </td>
+      <td> <?php echo $value['tahun'] ?> </td>
       <td> <?php echo $value['bulan'] ?> </td>
       <td> <?php echo get_kelas($value['kelas_id']) ?> </td>
       <td> <?php echo $value['status_transaksi'] ?> </td>

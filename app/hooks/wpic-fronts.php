@@ -39,7 +39,7 @@ class WpicFronts {
 			}
 
 			if ( $auth->check() ) {
-				if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) ) {
+				if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) || $auth->hasRole(3) ) {
 					redirect(redirect_by_role('admin'));
 				}
 				if ( $auth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
@@ -52,7 +52,7 @@ class WpicFronts {
  				case 'login':
  					if ( isset( $postdata['_login'] ) && $postdata['_login'] ) {
  						$auth->login($postdata['user_email'], $postdata['user_pass']);
- 						if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) ) {
+ 						if ( $auth->hasRole(\Delight\Auth\Role::ADMIN) || $auth->hasRole(3) ) {
  							redirect(redirect_by_role('admin'));
  						}
  						if ( $auth->hasRole(\Delight\Auth\Role::AUTHOR) ) {
